@@ -11,13 +11,20 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
+import { DynamiqueComponentService } from '../services/DynamicComponentService';
+
+import { DynamicComponent } from '../services/dynamic.component';
+import { DynamicListComponent } from '../services/dynamic.list.component';
+
 @NgModule({
   declarations: [
     MyApp,
     AboutPage,
     ContactPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    DynamicComponent,
+    DynamicListComponent
   ],
   imports: [
     BrowserModule,
@@ -29,11 +36,14 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     AboutPage,
     ContactPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    DynamicComponent,
+    DynamicListComponent
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    DynamiqueComponentService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

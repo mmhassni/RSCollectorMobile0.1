@@ -8,4 +8,16 @@
 
 <ion-content padding>
 
+  <ion-item padding="0">
+    <h1 >Information</h1>
+  </ion-item>
+
+  <form  #f="ngForm" (ngSubmit)="onSubmitForm(f)">
+    <ion-list >
+
+      <ng-template #dynamic></ng-template>
+
+    </ion-list >
+  </form>
+
 </ion-content>
