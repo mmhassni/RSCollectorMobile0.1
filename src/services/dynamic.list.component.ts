@@ -26,15 +26,11 @@ export class DynamicListComponent {
   @Input() initvalue: string ='default';
   @Input() initvalues: any[] = [];
   @Input() visible: boolean = true;
-  public static instanceOfDynamicComponent = new DynamicListComponent();
-  public static listProperties = Object.getOwnPropertyNames(DynamicListComponent.instanceOfDynamicComponent);
-
+  public static listProperties = [];
 
   constructor() {
 
-
-    console.log(DynamicListComponent.listProperties);
-    //console.log(Object.getOwnPropertyNames(this.instanceOfDynamicComponent));
+    DynamicListComponent.listProperties = Object.getOwnPropertyNames(this);
 
   }
 

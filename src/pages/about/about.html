@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      About
+      Déclaration
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -9,7 +9,7 @@
 <ion-content padding>
 
   <ion-item padding="0">
-    <h1 >Information</h1>
+    <h1 >Incident :</h1>
   </ion-item>
 
   <form  #f="ngForm" (ngSubmit)="onSubmitForm(f)">
@@ -19,5 +19,21 @@
 
     </ion-list >
   </form>
+
+  <ion-item padding="0">
+    <h1 >Coordonnées point test :</h1>
+  </ion-item>
+
+  <button ion-item  >
+    <p *ngIf="pointTest"> Longitude : {{pointTest.longitude}}</p>
+    <p *ngIf="pointTest"> Latitude : {{pointTest.latitude}}</p>
+  </button>
+
+
+  <button color="danger" ion-button (click)="recupererPointTest()" > Mesurer un point de test</button>
+
+  <button  ion-button (click)="enregistrerInformations()" > Mesurer un point de test</button>
+
+
 
 </ion-content>

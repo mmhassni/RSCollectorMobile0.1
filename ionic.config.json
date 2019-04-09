@@ -1,5 +1,14 @@
 {
   "name": "MobileRScollector0.1",
-  "integrations": {},
-  "type": "ionic-angular"
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular",
+  "proxies": [
+    {
+      "path": "/",
+      "proxyUrl": "http://172.20.10.2:8081/WEBCORE/MainServlet"
+    }
+  ]
 }
+

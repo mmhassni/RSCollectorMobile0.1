@@ -10,7 +10,7 @@ import {Component, Input} from '@angular/core';
       <div >{{libelle}}: {{name}} </div>
 
     </ion-label>
-    <ion-input [type]="type" name="nom" [placeholder]="tag" [value]="initvalue" > {{name}}</ion-input>
+    <ion-input [type]="type" [readonly]="readonly" name="nom" [placeholder]="tag" [value]="initvalue" > {{name}}</ion-input>
   </ion-item>`
 })
 export class DynamicComponent {
@@ -25,15 +25,11 @@ export class DynamicComponent {
   @Input() required: boolean = false;
   @Input() initvalue: string ='default';
   @Input() visible: boolean = true;
-  public static instanceOfDynamicComponent = new DynamicComponent();
-  public static listProperties = Object.getOwnPropertyNames(DynamicComponent.instanceOfDynamicComponent);
-
+  public static listProperties = [];
 
   constructor() {
 
-
-    console.log(DynamicComponent.listProperties);
-    //console.log(Object.getOwnPropertyNames(this.instanceOfDynamicComponent));
+    DynamicComponent.listProperties = Object.getOwnPropertyNames(this);
 
   }
 

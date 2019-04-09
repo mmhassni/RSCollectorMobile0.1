@@ -1,6 +1,12 @@
 import {Component, ViewChild, ViewContainerRef} from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {Events, NavController, NavParams} from 'ionic-angular';
 import {DynamiqueComponentService} from "../../services/DynamicComponentService";
+import {AuthentificationProvider} from "../../providers/authentification/authentification";
+import {Subscription} from "rxjs";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {MapLocationPage} from "../map-location/map-location";
+
+
 
 @Component({
   selector: 'page-about',
@@ -14,66 +20,96 @@ export class AboutPage {
     read: ViewContainerRef
   }) viewContainerRef: ViewContainerRef;
 
-  public fichierJson = [
+  public fichierJson = [];
+  public parametresAuthentificationSubscription : Subscription;
+  public parametresAuthentificationActuelles = null;
 
-    {
-      "table": "ire_source",
-      "id": "nom",
-      "nom": "nom",
-      "libelle": "Nom",
-      "ref": "",
-      "type": "string",
-      "size": "",
-      "readonly": "true",
-      "visible": "true",
-      "search": "true",
-      "required": "false",
-      "tag": "",
-      "group": "",
-      "initvalue": "",
-      "initvalues": ""
-    },
+  public pointTest = null;
 
-    {
-      "table": "ire_source",
-      "id": "epsg",
-      "nom": "codeepsg",
-      "libelle": "RS",
-      "ref": "",
-      "type": "integer",
-      "size": "",
-      "readonly": "true",
-      "visible": "system",
-      "search": "false",
-      "required": "false",
-      "tag": "",
-      "group": "",
-      "initvalue": "26191",
-      "initvalues": "[{\"group\":\"RefSpatiales\",\"id\":\"26191\",\"libelle\":\"Maroc Zone 1\",\"visible\":\"true\",\"value\":\"26191\"},{\"group\":\"RefSpatiales\",\"id\":\"26192\",\"libelle\":\"Maroc Zone 2\",\"visible\":\"false\",\"value\":\"26192\"},{\"group\":\"RefSpatiales\",\"id\":\"26194\",\"libelle\":\"Maroc Zone 3\",\"visible\":\"false\",\"value\":\"26194\"},{\"group\":\"RefSpatiales\",\"id\":\"26195\",\"libelle\":\"Maroc Zone 4\",\"visible\":\"false\",\"value\":\"26195\"},{\"group\":\"RefSpatiales\",\"id\":\"4261\",\"libelle\":\"Merchich (DD)\",\"visible\":\"true\",\"value\":\"4261\"},{\"group\":\"RefSpatiales\",\"id\":\"4326\",\"libelle\":\"WGS84 (DD)\",\"visible\":\"true\",\"value\":\"4326\"},{\"group\":\"RefSpatiales\",\"id\":\"3857\",\"libelle\":\"Web Mercator\",\"visible\":\"true\",\"value\":\"3857\"},{\"group\":\"RefSpatiales\",\"id\":\"32628\",\"libelle\":\"Projection UTM28\",\"visible\":\"false\",\"value\":\"32628\"},{\"group\":\"RefSpatiales\",\"id\":\"32629\",\"libelle\":\"Projection UTM29\",\"visible\":\"false\",\"value\":\"32629\"},{\"group\":\"RefSpatiales\",\"id\":\"32630\",\"libelle\":\"Projection UTM30\",\"visible\":\"false\",\"value\":\"32630\"},{\"group\":\"RefSpatiales\",\"id\":\"null\",\"libelle\":\"Inconnu\",\"value\":\"null\"}]"
-    }
+  constructor(public navCtrl: NavController, public navParams: NavParams,public events: Events, public dynamiqueComponentService: DynamiqueComponentService, public authentificationProvider : AuthentificationProvider,public httpClient : HttpClient) {
+
+    this.authentificationProvider.emit();
 
 
+    this.events.subscribe('graphicActuel', graphicActuel => {
+      console.log(graphicActuel);
 
-  ];
+      if (graphicActuel) {
+        this.pointTest = {
+          "latitude": (graphicActuel as any).geometry.latitude,
+          "longitude": (graphicActuel as any).geometry.longitude
+        };
+      }
+    });
 
-  constructor(public navCtrl: NavController, public dynamiqueComponentService: DynamiqueComponentService) {
+
+    this.parametresAuthentificationSubscription = this.authentificationProvider.parametresAuthentification$.subscribe(
+
+      (objectImported : any) => {
+        this.parametresAuthentificationActuelles = objectImported;
+        console.log(objectImported);
+
+        if(objectImported && objectImported.success){
+
+          let formData = new FormData();
+          formData.append('action', "fields");
+          formData.append('idSession', objectImported.idSession);
+          formData.append('table', "incident");
+          formData.append('page', "1");
+          formData.append('start', "0");
+          formData.append('limit', "25");
+
+
+          let headers = new HttpHeaders();
+          headers = headers.set('Access-Control-Allow-Origin', '*');
+          headers = headers.set('enctype', 'multipart/form-data');
+          //headers = headers.set('Origin', 'http://localhost:8081');
+
+
+          this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
+            .subscribe(dataFields => {
+
+              console.log(dataFields);
+              this.chargerFormulaire(dataFields);
+
+
+
+
+
+            });
+
+        }
+
+      }
+
+    );
 
 
 
   }
 
   ngOnInit() {
+
+
+  }
+
+  chargerFormulaire(dataFields){
+
     this.dynamiqueComponentService.setRootViewContainerRef(this.viewContainerRef);
 
-    console.log('test');
+    for(let i=0; i< (dataFields as any).fields.length ; i++){
 
-
-    for(let i=0; i< this.fichierJson.length ; i++){
-
-      this.dynamiqueComponentService.addDynamicComponent(JSON.parse(JSON.stringify(this.fichierJson[i])));
+      this.dynamiqueComponentService.addDynamicComponent((dataFields as any).fields[i]);
 
     }
 
   }
 
+  ionViewDidEnter() {
+    console.log(this.navParams.data);
+  }
+
+  recupererPointTest() {
+    this.navCtrl.push(MapLocationPage);
+  }
 }

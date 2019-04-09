@@ -1,0 +1,107 @@
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import {Subject} from "rxjs";
+import {ToastController} from "ionic-angular";
+
+
+/*
+  Generated class for the AuthentificationProvider provider.
+
+  See https://angular.io/guide/dependency-injection for more info on providers
+  and Angular DI.
+*/
+@Injectable()
+export class AuthentificationProvider {
+
+
+  public parametresAuthentification = null;
+  public parametresAuthentification$ = new Subject<any>();
+
+  constructor(public httpClient: HttpClient, public toastCtrl : ToastController) {
+    console.log('Hello AuthentificationProvider Provider');
+    //pour la premiere fois la fonction emitUtilisateur ne poura pas s'executer toute seule
+    this.emit();
+    this.checkParametresAuthentification();
+    this.emit();
+  }
+
+  //permet d'indiquer qu'une mise à jour au niveau du service est necessaire
+  //en d'autre terme on informe le subject (la chaine youtube ) pour notifier les abonnés
+  emit() {
+    this.parametresAuthentification$.next(this.parametresAuthentification);
+    console.log(this.parametresAuthentification);
+  }
+
+  update(parametresAuthentification : any){
+
+    this.parametresAuthentification = parametresAuthentification;
+    this.emit();
+
+  }
+
+  public checkParametresAuthentification():void {
+
+    let formData = new FormData();
+    formData.append('action', "authentif");
+    formData.append('login', "admin");
+    formData.append('passwd', "admin");
+
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Access-Control-Allow-Origin', '*');
+    headers = headers.set('enctype', 'multipart/form-data');
+    headers = headers.set('Origin', 'http://172.20.10.2:8100');
+
+
+    this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
+      .subscribe(data => {
+        //console.log( JSON.parse((data as any).data.replace("'","Jw==")) );
+        //console.log( JSON.parse((data as any).data) );
+
+        if((data as any).success){
+
+          (data as any).data = JSON.parse((data as any).data);
+
+
+          this.parametresAuthentification = data;
+
+
+            let toast = this.toastCtrl.create({
+              message: (data as any).msg,
+              duration: 3000,
+              position: 'top',
+              cssClass: "toast-success"
+            });
+
+            toast.present();
+
+            this.emit();
+
+
+
+        }
+        else{
+          let toast = this.toastCtrl.create({
+            message: (data as any).msg,
+            duration: 3000,
+            position: 'top',
+            cssClass: "toast-echec"
+          });
+
+          toast.present();
+
+        }
+
+
+      },err=> {
+        console.log("une erreur est survenue");
+        console.log(err.message);
+        console.log(err);
+
+      });
+
+  }
+
+
+
+}
