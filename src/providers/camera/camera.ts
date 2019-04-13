@@ -59,10 +59,12 @@ export class CameraProvider {
     };
     */
     const CameraOptions  = {
-      quality: 100,
+      quality: 1,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE
+      //targetWidth: 100,
+      //targetHeight: 100
     };
 
 

@@ -97,4 +97,6 @@
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="To locate you" />
     </plugin>
     <plugin name="cordova-plugin-advanced-http" spec="^2.0.7" />
+    <engine name="android" spec="~7.1.4" />
+    <plugin name="cordova-sqlite-storage" spec="3.2.0" />
 </widget>

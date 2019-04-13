@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Authentification</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <h1 align="center">Authentification</h1>
+  <br>
+
+  <ion-list >
+
+
+    <ion-item >
+      <ion-label style="color: #000;">
+        Identifiant:
+
+      </ion-label>
+      <ion-input type="text"  name="login" placeholder="F34D49RE"  [(ngModel)]="login"  ></ion-input>
+    </ion-item>
+
+    <br>
+
+    <ion-item >
+      <ion-label style="color: #000;">
+        Mot de passe:
+      </ion-label>
+      <ion-input type="password" name="mdp" placeholder="123abcdef" [(ngModel)]="mdp"  ></ion-input>
+    </ion-item>
+
+
+  </ion-list>
+  <br>
+
+  <button ion-button color="stable" (click)="seConnecter()" block> Connexion </button>
+
+</ion-content>

@@ -14,13 +14,19 @@ import {MapLocationPage} from "../map-location/map-location";
 })
 export class AboutPage {
 
-  public name = 'from Angular';
+  public idEnregistrementGetRow = "2";
+  public nomTable = "incident";
+  public page = "1";
+  public start = "0";
+  public limit = "25";
+
 
   @ViewChild('dynamic', {
     read: ViewContainerRef
   }) viewContainerRef: ViewContainerRef;
 
-  public fichierJson = [];
+  public fichierJsonGetFields = null;
+  public fichierJsonGetRow = null;
   public parametresAuthentificationSubscription : Subscription;
   public parametresAuthentificationActuelles = null;
 
@@ -28,7 +34,6 @@ export class AboutPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,public events: Events, public dynamiqueComponentService: DynamiqueComponentService, public authentificationProvider : AuthentificationProvider,public httpClient : HttpClient) {
 
-    this.authentificationProvider.emit();
 
 
     this.events.subscribe('graphicActuel', graphicActuel => {
@@ -43,8 +48,8 @@ export class AboutPage {
     });
 
 
+    //Importation des nouvelles donnees relatives aux champs du formulaire
     this.parametresAuthentificationSubscription = this.authentificationProvider.parametresAuthentification$.subscribe(
-
       (objectImported : any) => {
         this.parametresAuthentificationActuelles = objectImported;
         console.log(objectImported);
@@ -53,25 +58,29 @@ export class AboutPage {
 
           let formData = new FormData();
           formData.append('action', "fields");
-          formData.append('idSession', objectImported.idSession);
-          formData.append('table', "incident");
-          formData.append('page', "1");
-          formData.append('start', "0");
-          formData.append('limit', "25");
+          formData.append('idSession', objectImported.data.idSession);
+          formData.append('table', this.nomTable);
+          formData.append('page', this.page);
+          formData.append('start', this.start);
+          formData.append('limit', this.limit);
 
 
           let headers = new HttpHeaders();
-          headers = headers.set('Access-Control-Allow-Origin', '*');
-          headers = headers.set('enctype', 'multipart/form-data');
+          headers = headers.set('Accept', "application/json, text/plain," + "*/*");
+
           //headers = headers.set('Origin', 'http://localhost:8081');
 
 
           this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
             .subscribe(dataFields => {
 
+              this.fichierJsonGetFields = dataFields;
               console.log(dataFields);
-              this.chargerFormulaire(dataFields);
 
+
+              console.log(this.parametresAuthentificationActuelles.data.idSession);
+              this.bootstrapGetRowToForm();
+              this.chargerFormulaire();
 
 
 
@@ -81,8 +90,10 @@ export class AboutPage {
         }
 
       }
-
     );
+
+    this.authentificationProvider.emit();
+
 
 
 
@@ -93,15 +104,51 @@ export class AboutPage {
 
   }
 
-  chargerFormulaire(dataFields){
+  //permet de bootstraper le resultat d'une requete getRow
+  bootstrapGetRowToForm(){
 
-    this.dynamiqueComponentService.setRootViewContainerRef(this.viewContainerRef);
+    //On recupere d'abord les donnes du get
+    this.getRowRequest()
+      .subscribe(dataFields => {
+        this.fichierJsonGetRow = dataFields;
+        console.log(dataFields);
 
-    for(let i=0; i< (dataFields as any).fields.length ; i++){
+        //il faut envoyer les element de notre formulaire actuel
+        //et le resultat de la requete get row
 
-      this.dynamiqueComponentService.addDynamicComponent((dataFields as any).fields[i]);
+        this.fichierJsonGetFields.items =  this.dynamiqueComponentService.bootstrapRowToForm(this.fichierJsonGetRow,this.fichierJsonGetFields);
+        this.fichierJsonGetFields.fields = this.dynamiqueComponentService.bootstrapRowToForm(this.fichierJsonGetRow,this.fichierJsonGetFields);
+        console.log(this.fichierJsonGetFields);
 
-    }
+
+      });
+
+
+  }
+
+
+  getRowRequest(){
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', "application/json, text/plain," + "*/*");
+
+
+    //headers = headers.set('Origin', 'http://localhost:8081');
+
+    let formData = new FormData();
+    formData.append('action', "getRow");
+    formData.append('table', this.nomTable);
+    formData.append('filter', '{"simple_filter":"{\\"id\\":'+ this.idEnregistrementGetRow +'}"}');
+    formData.append('idSession', this.parametresAuthentificationActuelles.data.idSession);
+
+    return this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers});
+  }
+
+  //permet de charger le formulaire vide
+  chargerFormulaire(){
+
+    //on fait reference au composant parent pour qu'il soit connu au niveau du service
+    this.dynamiqueComponentService.addDynamicComponent(this.viewContainerRef,(this.fichierJsonGetFields as any));
 
   }
 
@@ -111,5 +158,19 @@ export class AboutPage {
 
   recupererPointTest() {
     this.navCtrl.push(MapLocationPage);
+  }
+
+
+  enregistrerInformations() {
+
+    this.bootstrapGetRowToForm();
+
+
+  }
+
+  actualiserFormulaire() {
+
+    this.chargerFormulaire();
+
   }
 }

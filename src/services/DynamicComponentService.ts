@@ -6,58 +6,151 @@ import {
 import { DynamicComponent } from './dynamic.component'
 import { DynamicListComponent } from './dynamic.list.component'
 import {DynamicPhotoComponent} from "./dynamic.photo.component";
+import {DynamicLocationComponent} from "./dynamic.location.component";
 
 @Injectable()
 export class DynamiqueComponentService {
 
 
   public rootViewContainer: any;
-  public name = "hamid";
 
   constructor(private factoryResolver: ComponentFactoryResolver) {
-
     console.log("On est arrive au service DynamiqueComponentService");
   }
 
 
   public setRootViewContainerRef(viewContainerRef) {
-
     //on recupere la reference du composant template dans lequel on va inserer notre composant
     this.rootViewContainer = viewContainerRef;
+  }
+
+  public bootstrapRowToForm(fichierJsonGetRow , fichierJsonGetFields){
+
+
+    let fichierJsonGetRowReturned = [];
+    for(let i = 0; i< fichierJsonGetFields.items.length; i++){
+
+      fichierJsonGetRowReturned.push(this.raffraichirProprietes(fichierJsonGetFields.items[i], JSON.parse(fichierJsonGetRow.item),[fichierJsonGetFields.items[i]["id"]],true,["value"]));
+
+    }
+
+    console.log(fichierJsonGetRowReturned);
+
+    return fichierJsonGetRowReturned;
 
   }
 
+  public raffraichirProprietes(objetPrincipal,objetAvecNouvellePP,listeProprieteACopier,forcerLaCopie,tableauValeursParForce){
 
-  public addDynamicComponent(inputListProperties : any) {
-
-    inputListProperties = this.jsonFiltre(inputListProperties);
-
-    //this.rootViewContainer.clear();
+    for(let i = 0 ; i < listeProprieteACopier.length; i++) {
 
 
+        //on doit voir d'abord si elle existe vraiment dans notre objet
+        for (let ppNouvelles in objetAvecNouvellePP) {
 
-    if( inputListProperties["initvalues"] == "" ){
+          //si c'est le cas alors on l'ajoute a notre objet meme si cette propriete
+          if (ppNouvelles == listeProprieteACopier[i]) {
 
-      if(inputListProperties["id"] == "photo"){
-        this.associerParametreInputAuModelEtAjouter( DynamicPhotoComponent , inputListProperties);
+            //si l'utilisateur demande de forcer la copie alors on doit la copier meme si la propriete n existe pas dans l'objet principal
+            if(forcerLaCopie){
+              if(tableauValeursParForce.length){
+                objetPrincipal[tableauValeursParForce[i]] = objetAvecNouvellePP[listeProprieteACopier[i]];
+              }
+              else{
+                objetPrincipal[listeProprieteACopier[i]] = objetAvecNouvellePP[listeProprieteACopier[i]];
+              }
 
-      }
-      else{
+            }else{
+              if( objetPrincipal[listeProprieteACopier[i]] == undefined){
+                objetPrincipal[listeProprieteACopier[i]] = objetAvecNouvellePP[listeProprieteACopier[i]];
+
+              }
+            }
+
+          }
+
+        }
+
+
+    }
+
+    console.log(objetPrincipal);
+    return objetPrincipal;
+
+  }
+
+  public addDynamicComponent(viewContainerRef, fichierJsonGlobal) {
+
+    try{
+      //On suprime les elements du formulaire existant
+      this.rootViewContainer.clear();
+    }
+    catch(e){
+      console.log(e);
+    }
+
+
+    this.setRootViewContainerRef(viewContainerRef);
+
+    let champSpatialeEnregistre = false;
+
+    for(let i=0; i< fichierJsonGlobal.items.length ; i++){
+
+      let inputListProperties = this.jsonFiltre(fichierJsonGlobal.items[i]);
+
+
+
+      console.log(fichierJsonGlobal);
+
+      if( inputListProperties["initvalues"] == "" ){
+
+        if(inputListProperties["id"].length >= 5 && inputListProperties["id"].substring(0,5) == "photo"){
+          this.associerParametreInputAuModelEtAjouter( DynamicPhotoComponent , inputListProperties);
+
+        }
+        else if(!champSpatialeEnregistre && (inputListProperties["id"] == "x" || inputListProperties["id"] == "y") && fichierJsonGlobal.isSpatial ){
+
+
+          for(let j=0; j< fichierJsonGlobal.items.length ; j++) {
+            let inputListPropertiesTemp = this.jsonFiltre(fichierJsonGlobal.items[j]);
+            if(inputListPropertiesTemp["id"] == "x"){
+              inputListProperties["x"] = inputListPropertiesTemp["initvalue"];
+              inputListProperties["xlibelle"] = inputListPropertiesTemp["libelle"];
+            }
+            if(inputListPropertiesTemp["id"] == "y"){
+              inputListProperties["y"] = inputListPropertiesTemp["initvalue"];
+              inputListProperties["ylibelle"] = inputListPropertiesTemp["libelle"];
+            }
+
+          }
+          console.log(inputListProperties);
+
+          this.associerParametreInputAuModelEtAjouter( DynamicLocationComponent , inputListProperties);
+          champSpatialeEnregistre = true;
+
+        }
+
+        else{
 
           if(inputListProperties["type"] == "integer"  || inputListProperties["type"] == "string"){
             this.associerParametreInputAuModelEtAjouter( DynamicComponent , inputListProperties);
 
           }
 
+        }
+
       }
 
+      if( inputListProperties["initvalues"] != "" ){
+
+        this.associerParametreInputAuModelEtAjouter( DynamicListComponent , inputListProperties);
+
+      }
+
+
+
     }
 
-    if( inputListProperties["initvalues"] != "" ){
-
-      this.associerParametreInputAuModelEtAjouter( DynamicListComponent , inputListProperties);
-
-    }
 
 
   }// fin de la fonction addDynamicComponent
@@ -93,7 +186,7 @@ export class DynamiqueComponentService {
 
           component.instance[property] = DynamiqueComponentService.adapteType(inputListProperties[property]);
 
-
+          console.log(component.instance)
         }
 
       }
@@ -106,47 +199,28 @@ export class DynamiqueComponentService {
   }
 
 
-  //permet d adapter le fichier json en entre selon les regles applicatif du projet et selon la compatibilite avec
-  //les specificite du langugage javascript
+  //permet d adapter le fichier json en entré selon les regles applicatif du projet et selon la compatibilite avec
+  //les specificités du langugage javascript
   public jsonFiltre(inputListProperties : any){
 
     let returnedInputListProperties = {};
 
-    for(let property in inputListProperties){
-      console.log(property);
+    for(let property in inputListProperties) {
 
-      if( property == "initvalues" && inputListProperties[property] != ""){
-        console.log("avant");
-        console.log(inputListProperties[property]);
-        console.log("apres");
-        if(inputListProperties[property].substring(0,1) != "%"){
-          console.log(JSON.parse(inputListProperties[property]));
-          returnedInputListProperties[property] = JSON.parse(inputListProperties[property]);
-
-        }
-
+      try{
+        inputListProperties[property] = JSON.parse(inputListProperties[property]);
       }
-
-      else{
-
-        if(property == "type" && inputListProperties[property] == "point"){
-
-
-
-        }
-        else{
-          returnedInputListProperties[property] = DynamiqueComponentService.adapteType(inputListProperties[property]);
-        }
-
-
-
+      catch (e) {
+        console.log(e + " cette propriete ne peux pas etre converti en un obet json");
       }
+      returnedInputListProperties[property] = DynamiqueComponentService.adapteType(inputListProperties[property]);
 
     }
 
     return returnedInputListProperties;
 
   }
+
 
   //permet d adapter le type de l entre
   public static adapteType(inputValue : any){
@@ -169,8 +243,6 @@ export class DynamiqueComponentService {
     }
 
   }
-
-
 
 
 

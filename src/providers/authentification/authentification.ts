@@ -17,6 +17,9 @@ export class AuthentificationProvider {
   public parametresAuthentification = null;
   public parametresAuthentification$ = new Subject<any>();
 
+  public login = "";
+  public mdp = "";
+
   constructor(public httpClient: HttpClient, public toastCtrl : ToastController) {
     console.log('Hello AuthentificationProvider Provider');
     //pour la premiere fois la fonction emitUtilisateur ne poura pas s'executer toute seule
@@ -43,14 +46,22 @@ export class AuthentificationProvider {
 
     let formData = new FormData();
     formData.append('action', "authentif");
-    formData.append('login', "admin");
-    formData.append('passwd', "admin");
+    formData.append('login', this.login);
+    formData.append('passwd', this.mdp);
 
 
     let headers = new HttpHeaders();
-    headers = headers.set('Access-Control-Allow-Origin', '*');
-    headers = headers.set('enctype', 'multipart/form-data');
-    headers = headers.set('Origin', 'http://172.20.10.2:8100');
+    headers = headers.set('Accept', "application/json, text/plain," + "*/*");
+
+
+    //headers = headers.set('Access-Control-Allow-Origin', '*');
+    //headers = headers.set('content', 'application/json');
+    //headers = headers.set('content-type', 'application/x-www-form-urlencoded');
+    //headers = headers.set('Upgrade-Insecure-Requests', '1');
+    //headers = headers.set('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8');
+    //headers = headers.set('enctype', 'multipart/form-data');
+    //headers = headers.set('Origin', 'http://172.20.10.2:8100');
+
 
 
     this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
@@ -103,5 +114,12 @@ export class AuthentificationProvider {
   }
 
 
+  nouvelleConnexion(login: any, mdp: any) {
 
+    this.login = login;
+    this.mdp = mdp;
+    this.checkParametresAuthentification();
+
+
+  }
 }

@@ -165,15 +165,19 @@ export class MapLocationPage {
     mapView.on("click", function addElementToGraphic(evt){
       console.log(evt);
       console.log(mapView.graphics);
+
       if(MapLocationPage.graphicActuel){
         mapView.graphics.remove(MapLocationPage.graphicActuel);
       }
+
       let graphicActuel = new Graphic(evt.mapPoint, symbol);
+
       MapLocationPage.graphicActuel = graphicActuel;
       mapView.graphics.add(graphicActuel);
       console.log("X: " + evt.mapPoint.longitude.toString() + ", <br>Y: " + evt.mapPoint.latitude.toString());
     });
 
+    /*
     function addToMap(evt) {
       var symbol;
       mapView.showZoomSlider();
@@ -194,6 +198,7 @@ export class MapLocationPage {
       map.graphics.add(graphic);
 
     }
+    */
 
 
     let locateBtn = new Locate({

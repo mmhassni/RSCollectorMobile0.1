@@ -24,6 +24,15 @@ import {HttpClientModule} from "@angular/common/http";
 import {MapLocationPage} from "../pages/map-location/map-location";
 import { Geolocation } from '@ionic-native/geolocation';
 
+import { HTTP } from '@ionic-native/http/ngx';
+import {DynamicLocationComponent} from "../services/dynamic.location.component";
+import {AuthentificationPage} from "../pages/authentification/authentification";
+import {ListeIncidentPage} from "../pages/liste-incident/liste-incident";
+import { StockageProvider } from '../providers/stockage/stockage';
+
+import { IonicStorageModule } from '@ionic/storage';
+
+
 
 @NgModule({
   declarations: [
@@ -35,12 +44,17 @@ import { Geolocation } from '@ionic-native/geolocation';
     MapLocationPage,
     DynamicComponent,
     DynamicListComponent,
-    DynamicPhotoComponent
+    DynamicPhotoComponent,
+    DynamicLocationComponent,
+    AuthentificationPage,
+    ListeIncidentPage
+
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -52,7 +66,11 @@ import { Geolocation } from '@ionic-native/geolocation';
     MapLocationPage,
     DynamicComponent,
     DynamicListComponent,
-    DynamicPhotoComponent
+    DynamicPhotoComponent,
+    DynamicLocationComponent,
+    AuthentificationPage,
+    ListeIncidentPage
+
   ],
   providers: [
     StatusBar,
@@ -63,7 +81,9 @@ import { Geolocation } from '@ionic-native/geolocation';
     Camera,
     FilePath,
     Geolocation,
-    AuthentificationProvider
+    HTTP,
+    AuthentificationProvider,
+    StockageProvider
   ]
 })
 export class AppModule {}
