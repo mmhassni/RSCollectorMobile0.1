@@ -1,12 +1,14 @@
 import {
   ComponentFactoryResolver,
   Injectable
-} from '@angular/core'
+} from '@angular/core';
 
-import { DynamicComponent } from './dynamic.component'
+import { DynamicComponent } from './dynamic.component';
 import { DynamicListComponent } from './dynamic.list.component'
 import {DynamicPhotoComponent} from "./dynamic.photo.component";
 import {DynamicLocationComponent} from "./dynamic.location.component";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {DynamicDateComponent} from "./dynamic.date.component";
 
 @Injectable()
 export class DynamiqueComponentService {
@@ -14,10 +16,82 @@ export class DynamiqueComponentService {
 
   public rootViewContainer: any;
 
-  constructor(private factoryResolver: ComponentFactoryResolver) {
+  constructor(private factoryResolver: ComponentFactoryResolver,public httpClient : HttpClient) {
     console.log("On est arrive au service DynamiqueComponentService");
   }
 
+  //prepare la requete http pour l envoyer
+  public enregistrerInformationFormulaire(fichierJsonGetFields,action,nomTable,idSession){
+
+    let formData = new FormData();
+
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', "application/json, text/plain," + "*/*");
+
+    let editData = {};
+
+    formData.append("action", "writeRow");
+    formData.append("table", nomTable);
+
+    for(let i = 0; i< fichierJsonGetFields.items.length; i++){
+
+
+
+
+        //si l'action est "modifier" alors on doit preparer egalement l'objet editData
+        if(action == "modifier") {
+          if(typeof fichierJsonGetFields.items[i].value == "string") {
+            if("date_add" == fichierJsonGetFields.items[i].id.toString()) {
+
+              /*
+              let dateTemp = new Date();
+              console.log(dateTemp.getTime());
+              let dateTempMilSec = dateTemp.getTime().toString();
+              let dateTempMilSecCopy = dateTempMilSec;
+              */
+              editData["date_add"] = (new Date(fichierJsonGetFields.items[i].value)).getTime();
+              formData.append(fichierJsonGetFields.items[i].id, (new Date(fichierJsonGetFields.items[i].value)).getTime().toString() );
+            }
+            else{
+              editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value.toString();
+              formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
+
+
+            }
+          }
+          else if ("shape" == fichierJsonGetFields.items[i].id) {
+
+          }
+          else if("epsg" == fichierJsonGetFields.items[i].id.toString()){
+
+            editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value.toString();
+            formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
+
+
+          }
+          else{
+            editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value;
+            formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
+
+          }
+        }
+
+
+    }
+
+    formData.append("editData", JSON.stringify(editData));
+    formData.append("idSession", idSession);
+
+    console.log(editData);
+
+
+    return  this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers});
+
+
+
+
+  }
 
   public setRootViewContainerRef(viewContainerRef) {
     //on recupere la reference du composant template dans lequel on va inserer notre composant
@@ -27,16 +101,42 @@ export class DynamiqueComponentService {
   public bootstrapRowToForm(fichierJsonGetRow , fichierJsonGetFields){
 
 
-    let fichierJsonGetRowReturned = [];
+    let fichierJsonGetField = [];
     for(let i = 0; i< fichierJsonGetFields.items.length; i++){
 
-      fichierJsonGetRowReturned.push(this.raffraichirProprietes(fichierJsonGetFields.items[i], JSON.parse(fichierJsonGetRow.item),[fichierJsonGetFields.items[i]["id"]],true,["value"]));
+      fichierJsonGetField.push(this.raffraichirProprietes(fichierJsonGetFields.items[i], JSON.parse(fichierJsonGetRow.item),[fichierJsonGetFields.items[i]["id"]],true,["value"]));
 
     }
 
-    console.log(fichierJsonGetRowReturned);
+    console.log(fichierJsonGetField);
 
-    return fichierJsonGetRowReturned;
+    return fichierJsonGetField;
+
+  }
+
+  public refreshFormWithFormActualValue(actualForm , fichierJsonGetFields){
+
+
+    let fichierJsonGetField = [];
+    for(let i = 0; i< fichierJsonGetFields.items.length; i++){
+
+      for(let j = 0; j< actualForm._embeddedViews.length; j++){
+        console.log((actualForm._embeddedViews[j] as any).nodes[1].instance["id"]);
+        console.log(fichierJsonGetFields.items[i]["id"]);
+        if(actualForm._embeddedViews[j].nodes[1].instance["id"] == fichierJsonGetFields.items[i]["id"] ){
+
+          fichierJsonGetField.push(this.raffraichirProprietes(fichierJsonGetFields.items[i], actualForm._embeddedViews[j].nodes[1].instance,["value"],true,["value"]));
+
+        }
+
+      }
+
+
+    }
+
+    console.log(fichierJsonGetField);
+
+    return fichierJsonGetField;
 
   }
 
@@ -79,7 +179,11 @@ export class DynamiqueComponentService {
 
   }
 
-  public addDynamicComponent(viewContainerRef, fichierJsonGlobal) {
+  public addDynamicComponent(viewContainerRef, fichierJsonGlobal,idSession) {
+
+    let inputListPropertiesTempLocation = null;
+    let inputListPropertiesTempX = null;
+    let inputListPropertiesTempY = null;
 
     try{
       //On suprime les elements du formulaire existant
@@ -108,7 +212,14 @@ export class DynamiqueComponentService {
           this.associerParametreInputAuModelEtAjouter( DynamicPhotoComponent , inputListProperties);
 
         }
-        else if(!champSpatialeEnregistre && (inputListProperties["id"] == "x" || inputListProperties["id"] == "y") && fichierJsonGlobal.isSpatial ){
+        else if( inputListProperties["type"] == "date" ){
+
+          this.associerParametreInputAuModelEtAjouter( DynamicDateComponent , inputListProperties);
+
+
+        }
+        else if(!champSpatialeEnregistre  && fichierJsonGlobal.isSpatial ){
+
 
 
           for(let j=0; j< fichierJsonGlobal.items.length ; j++) {
@@ -116,20 +227,33 @@ export class DynamiqueComponentService {
             if(inputListPropertiesTemp["id"] == "x"){
               inputListProperties["x"] = inputListPropertiesTemp["initvalue"];
               inputListProperties["xlibelle"] = inputListPropertiesTemp["libelle"];
+              inputListPropertiesTempX = inputListPropertiesTemp;
+
             }
             if(inputListPropertiesTemp["id"] == "y"){
               inputListProperties["y"] = inputListPropertiesTemp["initvalue"];
               inputListProperties["ylibelle"] = inputListPropertiesTemp["libelle"];
+              inputListPropertiesTempY = inputListPropertiesTemp;
+
+
             }
 
           }
+          inputListPropertiesTempLocation = inputListProperties;
           console.log(inputListProperties);
 
-          this.associerParametreInputAuModelEtAjouter( DynamicLocationComponent , inputListProperties);
+
+
           champSpatialeEnregistre = true;
 
         }
+        else if(inputListProperties["ref"] != "" ){
 
+          inputListProperties["idSession"]= idSession;
+          this.associerParametreInputAuModelEtAjouter( DynamicListComponent , inputListProperties);
+
+
+        }
         else{
 
           if(inputListProperties["type"] == "integer"  || inputListProperties["type"] == "string"){
@@ -150,6 +274,10 @@ export class DynamiqueComponentService {
 
 
     }
+
+    this.associerParametreInputAuModelEtAjouter( DynamicLocationComponent , inputListPropertiesTempLocation);
+    this.associerParametreInputAuModelEtAjouter( DynamicComponent , inputListPropertiesTempX);
+    this.associerParametreInputAuModelEtAjouter( DynamicComponent , inputListPropertiesTempY);
 
 
 
@@ -182,11 +310,11 @@ export class DynamiqueComponentService {
         //si la popriete est bien celle qu'on cherche
         if( property == ModelClass.listProperties[i]){
 
-          console.log(inputListProperties);
+          //onsole.log(inputListProperties);
 
           component.instance[property] = DynamiqueComponentService.adapteType(inputListProperties[property]);
 
-          console.log(component.instance)
+          //console.log(component.instance)
         }
 
       }
@@ -207,13 +335,17 @@ export class DynamiqueComponentService {
 
     for(let property in inputListProperties) {
 
-      try{
-        inputListProperties[property] = JSON.parse(inputListProperties[property]);
-      }
-      catch (e) {
-        console.log(e + " cette propriete ne peux pas etre converti en un obet json");
-      }
       returnedInputListProperties[property] = DynamiqueComponentService.adapteType(inputListProperties[property]);
+      if(property == "initvalues"){
+
+        try{
+          returnedInputListProperties[property] = JSON.parse(inputListProperties[property]);
+        }
+        catch (e) {
+          console.log(e + " cette propriete ne peux pas etre converti en un obet json");
+        }
+
+      }
 
     }
 
@@ -226,11 +358,11 @@ export class DynamiqueComponentService {
   public static adapteType(inputValue : any){
 
     //on change le type de l input
-    if(inputValue === true){
+    if(inputValue === "true"){
       return true;
     }
 
-    else if(inputValue === false){
+    else if(inputValue === "false"){
       return false;
     }
 

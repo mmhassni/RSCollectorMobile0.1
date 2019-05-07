@@ -31,6 +31,8 @@ import {ListeIncidentPage} from "../pages/liste-incident/liste-incident";
 import { StockageProvider } from '../providers/stockage/stockage';
 
 import { IonicStorageModule } from '@ionic/storage';
+import {DynamicDateComponent} from "../services/dynamic.date.component";
+import {DynamicTextareaComponent} from "../services/dynamic.textarea.component";
 
 
 
@@ -46,6 +48,8 @@ import { IonicStorageModule } from '@ionic/storage';
     DynamicListComponent,
     DynamicPhotoComponent,
     DynamicLocationComponent,
+    DynamicDateComponent,
+    DynamicTextareaComponent,
     AuthentificationPage,
     ListeIncidentPage
 
@@ -68,6 +72,8 @@ import { IonicStorageModule } from '@ionic/storage';
     DynamicListComponent,
     DynamicPhotoComponent,
     DynamicLocationComponent,
+    DynamicDateComponent,
+    DynamicTextareaComponent,
     AuthentificationPage,
     ListeIncidentPage
 
@@ -76,7 +82,7 @@ import { IonicStorageModule } from '@ionic/storage';
     StatusBar,
     SplashScreen,
     DynamiqueComponentService,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    //{provide: ErrorHandler, useClass: IonicErrorHandler},
     CameraProvider,
     Camera,
     FilePath,

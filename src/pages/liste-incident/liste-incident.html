@@ -20,7 +20,13 @@
 <ion-content padding>
 
 
-  <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
+  <ion-item>
+    <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
+    <ion-icon *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.data['profile'] == 'technicienPrestataire'"  name="add-circle" (click)="ajouterItem()" item-end></ion-icon>
+  </ion-item>
+
+
+
 
 
 
@@ -28,7 +34,10 @@
     <button ion-item *ngFor="let item of fichierJsonGetRowsFiltre"   (click)="itemTapped($event, item)">
       {{item?.id}}
       <p>{{item?.description}}</p>
-      <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
+        <ion-icon style="zoom:0.85;" name="time" (click)="detailItemTapped($event, item)" item-end></ion-icon>
+        <ion-icon style="zoom:0.85;" name="list-box" (click)="detailItemTapped($event, item)" item-end></ion-icon>
+        <ion-icon style="zoom:0.9;" name="create" (click)="detailItemTapped($event, item)" item-end></ion-icon>
+
     </button>
   </ion-list>
 

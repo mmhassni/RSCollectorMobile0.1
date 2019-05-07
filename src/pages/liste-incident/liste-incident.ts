@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Subscription} from "rxjs";
 import {AuthentificationProvider} from "../../providers/authentification/authentification";
-import {TabsPage} from "../tabs/tabs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {AboutPage} from "../about/about";
 
 /**
  * Generated class for the ListeIncidentPage page.
@@ -30,7 +30,7 @@ export class ListeIncidentPage {
   public objetActuel = {};
 
 
-  public nomTable = "incident";
+  public nomTable = "declaration";
   public page = "1";
   public start = "0";
   public limit = "25";
@@ -60,7 +60,7 @@ export class ListeIncidentPage {
   }
 
   ionViewDidEnter() {
-    //this.refresh();
+    this.refresh();
 
   }
 
@@ -123,10 +123,34 @@ export class ListeIncidentPage {
 
 
   ajouterItem() {
+
+
+
+  }
+
+  detailItemTapped($event, item) {
+
+
+
+
     
   }
 
-  detailItemTapped($event: MouseEvent, item: any) {
-    
+  itemTapped($event, item) {
+
+    let navOptions = {
+      animation: 'ios-transition',
+      duration: 1000
+    };
+
+    this.navCtrl.push(
+      AboutPage,
+      {
+      informationsActuelles: item,
+      action: "modifier"
+      },
+      navOptions
+        );
+
   }
 }

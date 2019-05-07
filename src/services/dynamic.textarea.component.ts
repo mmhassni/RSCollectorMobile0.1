@@ -15,7 +15,7 @@ import {Events, NavParams} from "ionic-angular";
 
     </ion-item>`
 })
-export class DynamicComponent implements OnInit {
+export class DynamicTextareaComponent implements OnInit {
 
 
   @Input() id: any = '';
@@ -32,28 +32,8 @@ export class DynamicComponent implements OnInit {
 
   constructor(public events: Events) {
 
-    DynamicComponent.listProperties = Object.getOwnPropertyNames(this);
+    DynamicTextareaComponent.listProperties = Object.getOwnPropertyNames(this);
 
-    this.events.subscribe('graphicActuel', graphicActuel => {
-      console.log(graphicActuel);
-
-      if (graphicActuel && this.id == "x") {
-        this.value = (graphicActuel as any).geometry.longitude.toFixed(6);
-      }
-
-      if (graphicActuel && this.id == "y") {
-        this.value = (graphicActuel as any).geometry.latitude.toFixed(6);
-      }
-
-      if(graphicActuel && this.id == "wkt"){
-        this.value = "POINT( " +
-          (graphicActuel as any).geometry.longitude.toFixed(6) +
-          " " +
-          (graphicActuel as any).geometry.latitude.toFixed(6) +
-          ")";
-      }
-
-    });
 
   }
 
@@ -68,12 +48,6 @@ export class DynamicComponent implements OnInit {
       this.value = this.initvalue;
       //si la valeur est toujours null alors il vaut mieux la remplacer par "" au lieu de 0 pour le type text
       if( !this.value && this.type == "text"){
-        this.value = "";
-      }
-    }
-
-    if(this.id == "x" || this.id == "y"){
-      if(this.value == 0){
         this.value = "";
       }
     }

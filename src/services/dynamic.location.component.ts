@@ -7,16 +7,18 @@ import {MapLocationPage} from "../pages/map-location/map-location";
 
 @Component({
   selector: 'dynamic-component',
-  template: `<ion-item [id]="id"  style="padding:4" >
+  template: `<ion-item  *ngIf="visible" [id]="id"  style="padding:4" >
             
                <ion-label style="color: #000;">Position
+                 <!--
                  <p *ngIf="x" >{{xlibelle}} = {{x}}</p>
-                 <p *ngIf="!x && graphicPoint" >{{xlibelle}} = {{x}}</p>
+                 <p *ngIf="!x && graphicPoint" >{{xlibelle}} = {{x.toFixed(5)}}</p>
                  <p *ngIf="y">{{ylibelle}} = {{y}} </p>
-                 <p *ngIf="!y && graphicPoint"> {{ylibelle}} = {{y}} </p>
+                 <p *ngIf="!y && graphicPoint"> {{ylibelle}} = {{y.toFixed(5)}} </p>
+                 -->
                </ion-label>
             
-               <button padding ion-button clear  item-end (click)="recupererGraphic()">
+               <button *ngIf="readonly" padding ion-button clear  item-end (click)="recupererGraphic()">
                  Mesurer
                </button>
             

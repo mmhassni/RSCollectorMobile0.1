@@ -23,8 +23,8 @@ export class AuthentificationProvider {
   constructor(public httpClient: HttpClient, public toastCtrl : ToastController) {
     console.log('Hello AuthentificationProvider Provider');
     //pour la premiere fois la fonction emitUtilisateur ne poura pas s'executer toute seule
-    this.emit();
-    this.checkParametresAuthentification();
+    //this.emit();
+    //this.checkParametresAuthentification();
     this.emit();
   }
 
@@ -71,22 +71,24 @@ export class AuthentificationProvider {
 
         if((data as any).success){
 
+
           (data as any).data = JSON.parse((data as any).data);
 
 
           this.parametresAuthentification = data;
+          (this.parametresAuthentification as any).data["profile"] = "technicienPrestataire";
 
 
-            let toast = this.toastCtrl.create({
-              message: (data as any).msg,
-              duration: 3000,
-              position: 'top',
-              cssClass: "toast-success"
-            });
+          let toast = this.toastCtrl.create({
+            message: (data as any).msg,
+            duration: 3000,
+            position: 'top',
+            cssClass: "toast-success"
+          });
 
-            toast.present();
+          toast.present();
 
-            this.emit();
+          this.emit();
 
 
 

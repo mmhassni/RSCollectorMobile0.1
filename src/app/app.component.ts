@@ -8,7 +8,7 @@ import {HomePage} from "../pages/home/home";
 import {Subscription} from "rxjs";
 import {AuthentificationProvider} from "../providers/authentification/authentification";
 import {StockageProvider} from "../providers/stockage/stockage";
-import {ListeIncidentPage} from "../pages/liste-incident/liste-incident";
+import {TabsPage} from "../pages/tabs/tabs";
 
 @Component({
   templateUrl: 'app.html'
@@ -24,7 +24,7 @@ export class MyApp {
 
   public parametresAuthentificationSubscription : Subscription;
   public parametresAuthentificationActuelles = null;
-  public pageIncident = ListeIncidentPage;
+  public pageIncident = {component : TabsPage};
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public authentificationProvider : AuthentificationProvider,public stockageProvider : StockageProvider) {
     platform.ready().then(() => {
@@ -37,7 +37,7 @@ export class MyApp {
     this.pages = [
 
 
-      { title: 'Utilisateurs', component: HomePage }
+      { title: 'Reference Spatiale', component: HomePage }
 
     ];
 
@@ -61,8 +61,7 @@ export class MyApp {
     this.nav.setRoot(page.component);
   }
 
-  deconnexion() {
-
+  deconnexion(){
     this.stockageProvider.setValue("identifiants",{"login":"","mdp":""});
     this.authentificationProvider.update(null);
     this.nav.setRoot(AuthentificationPage);
