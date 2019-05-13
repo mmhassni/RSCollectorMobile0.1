@@ -35,6 +35,7 @@ import {DynamicDateComponent} from "../services/dynamic.date.component";
 import {DynamicTextareaComponent} from "../services/dynamic.textarea.component";
 import {ListeActionPage} from "../pages/liste-action/liste-action";
 import {GenericFilterPage} from "../pages/generic-filter/generic-filter";
+import {CodePush} from "@ionic-native/code-push";
 
 
 
@@ -95,6 +96,7 @@ import {GenericFilterPage} from "../pages/generic-filter/generic-filter";
     Geolocation,
     HTTP,
     AuthentificationProvider,
+    CodePush,
     StockageProvider
   ]
 })
