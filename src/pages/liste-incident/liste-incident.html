@@ -11,7 +11,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Liste Incident</ion-title>
+    <ion-title>Liste Incidente</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -22,7 +22,8 @@
 
   <ion-item>
     <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-    <ion-icon *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.data['profile'] == 'technicienPrestataire'"  name="add-circle" (click)="ajouterItem()" item-end></ion-icon>
+    <ion-icon  style="zoom:0.9;" name="ios-funnel" (click)="filterTapped($event, item)" item-end></ion-icon>
+
   </ion-item>
 
 
@@ -31,15 +32,32 @@
 
 
   <ion-list>
-    <button ion-item *ngFor="let item of fichierJsonGetRowsFiltre"   (click)="itemTapped($event, item)">
-      {{item?.id}}
-      <p>{{item?.description}}</p>
-        <ion-icon style="zoom:0.85;" name="time" (click)="detailItemTapped($event, item)" item-end></ion-icon>
-        <ion-icon style="zoom:0.85;" name="list-box" (click)="detailItemTapped($event, item)" item-end></ion-icon>
-        <ion-icon style="zoom:0.9;" name="create" (click)="detailItemTapped($event, item)" item-end></ion-icon>
 
-    </button>
+    <div *ngFor="let item of fichierJsonGetRowsFiltre">
+      <button *ngIf="conformeAuFiltre(item)"  mode="md" ion-item    (click)="itemTapped($event, item)">
+
+        <p>Type Panne : {{toLibelle("idtypepanne",item?.idtypepanne)}} ({{toLibelle("idvoletpanne",item?.idvoletpanne)}})</p>
+        <p>Date : {{ toDate(item?.date_add,"") }}</p>
+        <p>Description : {{item?.description}}</p>
+        <p>Statut : {{toLibelle("idstatut",item?.idstatut)}}</p>
+        <ion-icon  style="zoom:1; /*background-color: #32db64;*/padding-left: 10px;padding-left: 30px;padding-top: 10px;padding-bottom: 10px;" name="md-more" (click)="detailItemTapped($event, item)" item-end></ion-icon>
+
+      </button>
+    </div>
+
+
   </ion-list>
 
+
+
+  <br> <br>
+
+
+
+  <ion-fab right bottom>
+    <button (click)="ajouterItem()" *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.data['profile'] == 'technicienPrestataire'"  name="add-circle"  ion-fab color="primary">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
 
 </ion-content>

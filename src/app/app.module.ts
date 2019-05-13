@@ -33,6 +33,8 @@ import { StockageProvider } from '../providers/stockage/stockage';
 import { IonicStorageModule } from '@ionic/storage';
 import {DynamicDateComponent} from "../services/dynamic.date.component";
 import {DynamicTextareaComponent} from "../services/dynamic.textarea.component";
+import {ListeActionPage} from "../pages/liste-action/liste-action";
+import {GenericFilterPage} from "../pages/generic-filter/generic-filter";
 
 
 
@@ -51,7 +53,9 @@ import {DynamicTextareaComponent} from "../services/dynamic.textarea.component";
     DynamicDateComponent,
     DynamicTextareaComponent,
     AuthentificationPage,
-    ListeIncidentPage
+    ListeIncidentPage,
+    ListeActionPage,
+    GenericFilterPage
 
   ],
   imports: [
@@ -75,7 +79,9 @@ import {DynamicTextareaComponent} from "../services/dynamic.textarea.component";
     DynamicDateComponent,
     DynamicTextareaComponent,
     AuthentificationPage,
-    ListeIncidentPage
+    ListeIncidentPage,
+    ListeActionPage,
+    GenericFilterPage
 
   ],
   providers: [

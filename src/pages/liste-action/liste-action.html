@@ -1,0 +1,65 @@
+
+
+<!--
+  Generated template for the ListeFournisseurPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Liste Incident</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+
+<ion-content padding>
+
+
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Date : greger
+    </ion-label>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Type : ergger
+    </ion-label>
+
+  </ion-item>
+
+  <ion-item padding="0">
+    <h1 >Actions:</h1>
+  </ion-item>
+
+
+  <ion-list>
+    <button ion-item *ngFor="let item of fichierJsonGetRowsFiltre"   (click)="itemTapped($event, item)">
+      {{item?.id}}
+      <p>{{item?.description}}</p>
+      <ion-icon style="zoom:0.85;" name="list-box" (click)="detailItemTapped($event, item)" item-end></ion-icon>
+
+    </button>
+  </ion-list>
+
+  <button *ngIf="derniereAction() && derniereAction().idstatut == 2" type="submit" color="secondary" ion-button  block (click)="rejeterIncident()">
+    Rejeter
+  </button>
+  <button *ngIf="derniereAction() && derniereAction().idstatut == 2" type="submit" color="secondary" ion-button  block (click)="cloturerIncident()">
+    Cloturer
+  </button>
+  <button *ngIf="derniereAction() && derniereAction().idstatut == 3" type="submit" color="secondary" ion-button  block (click)="traiterIncident()">
+    Traiter
+  </button>
+
+</ion-content>

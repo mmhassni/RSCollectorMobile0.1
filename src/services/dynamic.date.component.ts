@@ -45,13 +45,13 @@ export class DynamicDateComponent implements OnInit {
     let date=new Date(this.value);
 
 
-    let day = "";
-    let month = "";
+    let day = date.getDate().toString();
+    let month = (date.getMonth() + 1).toString();
     let year = date.getFullYear();
 
 
-    if((date.getDay()) < 10){
-      day = "0" + (date.getDay() + 1).toString();
+    if((date.getDate()) < 10){
+      day = "0" + (date.getDate()).toString();
     }
     if((date.getMonth() + 1) < 10){
       month = "0" + (date.getMonth() + 1).toString();

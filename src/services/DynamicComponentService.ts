@@ -9,6 +9,7 @@ import {DynamicPhotoComponent} from "./dynamic.photo.component";
 import {DynamicLocationComponent} from "./dynamic.location.component";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {DynamicDateComponent} from "./dynamic.date.component";
+import {DynamicTextareaComponent} from "./dynamic.textarea.component";
 
 @Injectable()
 export class DynamiqueComponentService {
@@ -40,7 +41,7 @@ export class DynamiqueComponentService {
 
 
         //si l'action est "modifier" alors on doit preparer egalement l'objet editData
-        if(action == "modifier") {
+        if(action == "modifier" || action == "creer") {
           if(typeof fichierJsonGetFields.items[i].value == "string") {
             if("date_add" == fichierJsonGetFields.items[i].id.toString()) {
 
@@ -59,6 +60,13 @@ export class DynamiqueComponentService {
 
 
             }
+          }
+          else if ("id" == fichierJsonGetFields.items[i].id) {
+            if(action == "modifier"){
+              editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value;
+              formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
+            }
+
           }
           else if ("shape" == fichierJsonGetFields.items[i].id) {
 
@@ -250,8 +258,14 @@ export class DynamiqueComponentService {
         else if(inputListProperties["ref"] != "" ){
 
           inputListProperties["idSession"]= idSession;
+          inputListProperties["refParent"]= viewContainerRef;
           this.associerParametreInputAuModelEtAjouter( DynamicListComponent , inputListProperties);
 
+
+        }
+        else if(inputListProperties["id"] == "description" || inputListProperties["id"] == "observation"){
+
+          this.associerParametreInputAuModelEtAjouter( DynamicTextareaComponent , inputListProperties);
 
         }
         else{
@@ -275,9 +289,12 @@ export class DynamiqueComponentService {
 
     }
 
-    this.associerParametreInputAuModelEtAjouter( DynamicLocationComponent , inputListPropertiesTempLocation);
-    this.associerParametreInputAuModelEtAjouter( DynamicComponent , inputListPropertiesTempX);
-    this.associerParametreInputAuModelEtAjouter( DynamicComponent , inputListPropertiesTempY);
+    if(inputListPropertiesTempX && inputListPropertiesTempY){
+      this.associerParametreInputAuModelEtAjouter( DynamicLocationComponent , inputListPropertiesTempLocation);
+      this.associerParametreInputAuModelEtAjouter( DynamicComponent , inputListPropertiesTempX);
+      this.associerParametreInputAuModelEtAjouter( DynamicComponent , inputListPropertiesTempY);
+    }
+
 
 
 

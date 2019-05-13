@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Déclaration
+    </ion-title>
+
+    <ion-buttons end>
+      <button ion-button color="blue" (click)="actualiserFormulaire()">
+        Annuler Filtre
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-item padding="0">
+    <h1 >Incident :</h1>
+  </ion-item>
+
+  <form>
+    <ion-list >
+
+      <ng-template #dynamic></ng-template>
+
+    </ion-list >
+  </form>
+
+
+
+  <button  ion-button block (click)="enregistrerInformations()" > Filtrer</button>
+
+
+
+</ion-content>

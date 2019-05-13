@@ -7,7 +7,7 @@ import {CameraProvider} from "../providers/camera/camera";
 @Component({
   selector: 'dynamic-component',
   template: `<div *ngIf="visible" [id]="id" >
-               <ion-item   style="padding-bottom:4px;padding-top: 4px">
+               <ion-item   style="padding-bottom:4px;padding-top: 4px;">
                    <ion-label>{{libelle}}:</ion-label>
                </ion-item>
   
@@ -15,7 +15,7 @@ import {CameraProvider} from "../providers/camera/camera";
   
                <br>
              
-               <div *ngIf="readonly" text-center>
+               <div *ngIf="!readonly" text-center>
                  <button ion-button round (click)="photoChooser()">
                    Charger Photo  <ion-icon padding name="camera"></ion-icon>
                  </button>

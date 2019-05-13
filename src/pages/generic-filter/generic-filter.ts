@@ -1,18 +1,25 @@
 import {Component, ViewChild, ViewContainerRef} from '@angular/core';
-import {Events, NavController, NavParams, ToastController} from 'ionic-angular';
+import {Events, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {Subscription} from "rxjs";
 import {DynamiqueComponentService} from "../../services/DynamicComponentService";
 import {AuthentificationProvider} from "../../providers/authentification/authentification";
-import {Subscription} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {MapLocationPage} from "../map-location/map-location";
 
+/**
+ * Generated class for the GenericFilterPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
 
-
+@IonicPage()
 @Component({
-  selector: 'page-about',
-  templateUrl: 'about.html'
+  selector: 'page-generic-filter',
+  templateUrl: 'generic-filter.html',
 })
-export class AboutPage {
+export class GenericFilterPage {
+
 
   public idEnregistrementGetRow = "";
   public nomTable = "";
@@ -68,6 +75,15 @@ export class AboutPage {
     });
 
 
+
+
+
+
+
+  }
+
+  ngOnInit() {
+
     //Importation des nouvelles donnees relatives aux champs du formulaire
     this.parametresAuthentificationSubscription = this.authentificationProvider.parametresAuthentification$.subscribe(
       (objectImported : any) => {
@@ -79,50 +95,21 @@ export class AboutPage {
 
           if(objectImported && objectImported.success){
 
-            let formData = new FormData();
-            formData.append('action', "fields");
-            formData.append('idSession', objectImported.data.idSession);
-            formData.append('table', this.nomTable);
-            formData.append('page', this.page);
-            formData.append('start', this.start);
-            formData.append('limit', this.limit);
+            if(this.navParams.data.fichierJsonGetFields){
 
+              this.fichierJsonGetFields =  this.navParams.data.fichierJsonGetFields;
 
-            let headers = new HttpHeaders();
-            headers = headers.set('Accept', "application/json, text/plain," + "*/*");
+              if(this.navParams.data.localGetRow){
+                this.fichierJsonGetFields.items =  this.dynamiqueComponentService.bootstrapRowToForm(
+                  {"item":this.navParams.data.localGetRow},
+                  this.fichierJsonGetFields);
+              }
+              this.chargerFormulaire();
 
-            //headers = headers.set('Origin', 'http://localhost:8081');
-
-
-            this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
-              .subscribe(dataFields => {
-
-                this.fichierJsonGetFields = dataFields;
-                console.log(dataFields);
-
-
-                console.log(this.parametresAuthentificationActuelles.data.idSession);
-                if(this.action == "creer" || this.idEnregistrementGetRow == ""){
-
-                  if(this.navParams.data.localGetRow){
-                    this.fichierJsonGetFields.items =  this.dynamiqueComponentService.bootstrapRowToForm(
-                      {"item":this.navParams.data.localGetRow},
-                                       this.fichierJsonGetFields);
-                  }
-                  this.chargerFormulaire();
-
-                }
-
-                else{
-                  this.bootstrapGetRowToForm();
-
-                }
+            }
 
 
 
-
-
-              });
 
           }
 
@@ -133,13 +120,6 @@ export class AboutPage {
     );
 
     this.authentificationProvider.emit();
-
-
-
-
-  }
-
-  ngOnInit() {
 
 
   }
@@ -215,45 +195,15 @@ export class AboutPage {
 
   enregistrerInformations() {
 
+    let filtreFormulaire = {};
+    for(let i = 0; i< (this.viewContainerRef as any)._embeddedViews.length; i++){
+
+      filtreFormulaire[(this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["id"]] = (this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["value"];
+
+    }
+    this.events.publish('filtreFormulaire', filtreFormulaire);
 
 
-    this.fichierJsonGetFields.items =  this.actualiserListeFields(this.viewContainerRef, this.fichierJsonGetFields);
-    this.fichierJsonGetFields.fields = this.fichierJsonGetFields.items;
-
-    this.dynamiqueComponentService.enregistrerInformationFormulaire(
-      this.fichierJsonGetFields,
-      this.action,
-      this.nomTable,
-      this.parametresAuthentificationActuelles.data.idSession)
-      .subscribe( data => {
-
-        console.log(data);
-
-        if((data as any).msg == "Opération terminée avec succès"){
-
-          let toast = this.toastCtrl.create({
-            message: "Informations enregistrées",
-            duration: 3000,
-            position: 'top',
-            cssClass: "toast-success"
-          });
-
-          toast.present();
-
-        }
-        else{
-          let toast = this.toastCtrl.create({
-            message: "Informations non enregistrées",
-            duration: 3000,
-            position: 'top',
-            cssClass: "toast-echec"
-          });
-
-          toast.present();
-
-        }
-
-      });
 
 
   }

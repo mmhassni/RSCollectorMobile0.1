@@ -4,16 +4,12 @@ import {Events, NavParams} from "ionic-angular";
 
 @Component({
   selector: 'dynamic-component',
-  template: `
+  template: `    
     <ion-item *ngIf="visible" [id]="id">
-
-      <ion-label style="color: #000;">
-        <div>{{libelle}}:</div>
-      </ion-label>
-
-      <ion-input text-center [type]="type" [readonly]="readonly"  [(ngModel)]="value"></ion-input>
-
-    </ion-item>`
+      <ion-label  style="color: #000;" >{{libelle}}:</ion-label>
+      <ion-textarea rows="3" [readonly]="readonly"  [(ngModel)]="value"></ion-textarea>
+    </ion-item>
+  `
 })
 export class DynamicTextareaComponent implements OnInit {
 
