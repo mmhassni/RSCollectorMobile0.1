@@ -99,4 +99,12 @@
     <plugin name="cordova-plugin-advanced-http" spec="^2.0.7" />
     <engine name="android" spec="~7.1.4" />
     <plugin name="cordova-sqlite-storage" spec="3.2.0" />
+    <plugin name="cordova-plugin-ionic" spec="5.3.0">
+        <variable name="APP_ID" value="86d6c346" />
+        <variable name="CHANNEL_NAME" value="Production" />
+        <variable name="UPDATE_METHOD" value="background" />
+        <variable name="UPDATE_API" value="https://api.ionicjs.com" />
+        <variable name="MAX_STORE" value="2" />
+        <variable name="MIN_BACKGROUND_DURATION" value="30" />
+    </plugin>
 </widget>
