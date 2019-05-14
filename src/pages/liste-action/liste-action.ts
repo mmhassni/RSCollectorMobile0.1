@@ -242,7 +242,6 @@ export class ListeActionPage {
 
   derniereAction(){
 
-    let objetOutput = null;
 
     let maxId = 0;
     let maxIdIndex = 0;

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Events, NavParams} from "ionic-angular";
+import {Events} from "ionic-angular";
 
 
 @Component({

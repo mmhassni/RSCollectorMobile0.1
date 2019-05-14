@@ -19,7 +19,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 })
 export class MapLocationPage {
 
-  @ViewChild('map') mapEl: ElementRef;LocateButton
+  @ViewChild('map') mapEl: ElementRef;
   public currentLong = 0;
   public currentLat = 0;
   public erreur = 0;
@@ -62,7 +62,8 @@ export class MapLocationPage {
 
     // Load the ArcGIS API for JavaScript modules
     const [Map, MapView,Locate, Graphic,
-      SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol]:any = await loadModules([
+      //SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol
+    ]:any = await loadModules([
       'esri/Map',
       'esri/views/MapView',
       'esri/widgets/Locate',

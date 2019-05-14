@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
+import {Events, IonicPage, NavController, NavParams, Platform} from 'ionic-angular';
 import {Subscription} from "rxjs";
 import {AuthentificationProvider} from "../../providers/authentification/authentification";
 import {StockageProvider} from "../../providers/stockage/stockage";
 import {TabsPage} from "../tabs/tabs";
+import {CodePush, SyncStatus} from "@ionic-native/code-push/ngx";
 
 
 
@@ -29,12 +30,52 @@ export class AuthentificationPage {
   public mdp='';
 
 
-  constructor(public navCtrl: NavController,
+  constructor(public platform: Platform,
+              public codePush : CodePush,
+              public navCtrl: NavController,
               public navParams: NavParams,
               public events: Events,
               public authentificationProvider : AuthentificationProvider,
               public stockageProvider : StockageProvider) {
 
+
+    platform.ready().then(() => {
+      // Okay, so the platform is ready and our plugins are available.
+      // Here you can do any higher level native things you might need.
+      alert("test");
+
+      this.codePush.sync({}, (progress) => {
+
+        alert("progress" + progress);
+
+      }).subscribe( (status) => {
+        alert("youpiii");
+
+        if(status == SyncStatus.CHECKING_FOR_UPDATE){
+          alert("checking for uodate");
+        }
+        if(status == SyncStatus.DOWNLOADING_PACKAGE){
+          alert("checking for uodate");
+        }
+        if(status == SyncStatus.IN_PROGRESS){
+          alert("checking for uodate");
+        }
+        if(status == SyncStatus.INSTALLING_UPDATE){
+          alert("checking for uodate");
+        }
+        if(status == SyncStatus.UP_TO_DATE){
+          alert("checking for uodate");
+        }
+        if(status == SyncStatus.UPDATE_INSTALLED){
+          alert("checking for uodate");
+        }
+        if(status == SyncStatus.ERROR){
+          alert("checking for uodate");
+        }
+
+      });
+
+    });
 
 
 

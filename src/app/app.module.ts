@@ -1,6 +1,6 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { IonicApp, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { AboutPage } from '../pages/about/about';
@@ -35,7 +35,7 @@ import {DynamicDateComponent} from "../services/dynamic.date.component";
 import {DynamicTextareaComponent} from "../services/dynamic.textarea.component";
 import {ListeActionPage} from "../pages/liste-action/liste-action";
 import {GenericFilterPage} from "../pages/generic-filter/generic-filter";
-import {CodePush} from "@ionic-native/code-push";
+import {CodePush} from "@ionic-native/code-push/ngx";
 
 
 
@@ -86,17 +86,16 @@ import {CodePush} from "@ionic-native/code-push";
 
   ],
   providers: [
+    CodePush,
     StatusBar,
     SplashScreen,
     DynamiqueComponentService,
-    //{provide: ErrorHandler, useClass: IonicErrorHandler},
     CameraProvider,
     Camera,
     FilePath,
     Geolocation,
     HTTP,
     AuthentificationProvider,
-    CodePush,
     StockageProvider
   ]
 })
