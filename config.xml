@@ -102,10 +102,10 @@
     <plugin name="cordova-plugin-ionic" spec="5.3.0">
         <variable name="APP_ID" value="86d6c346" />
         <variable name="CHANNEL_NAME" value="Production" />
-        <variable name="UPDATE_METHOD" value="background" />
+        <variable name="UPDATE_METHOD" value="auto" />
         <variable name="UPDATE_API" value="https://api.ionicjs.com" />
-        <variable name="MAX_STORE" value="2" />
-        <variable name="MIN_BACKGROUND_DURATION" value="30" />
+        <variable name="MAX_STORE" value="0" />
+        <variable name="WARN_DEBUG" value="false" />
     </plugin>
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
     <plugin name="cordova-plugin-code-push" spec="1.11.18" />
