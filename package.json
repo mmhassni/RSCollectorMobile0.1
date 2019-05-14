@@ -28,6 +28,7 @@
     "@ionic-native/http": "^5.4.0",
     "@ionic-native/splash-screen": "~4.18.0",
     "@ionic-native/status-bar": "~4.18.0",
+    "@ionic/pro": "^2.0.4",
     "@ionic/storage": "^2.2.0",
     "code-push": "2.0.6",
     "cordova-android": "7.1.4",
@@ -82,8 +83,8 @@
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-ionic": {
-        "APP_ID": "48fa63d7",
-        "CHANNEL_NAME": "Production",
+        "APP_ID": "86d6c346",
+        "CHANNEL_NAME": "Master",
         "UPDATE_METHOD": "auto",
         "UPDATE_API": "https://api.ionicjs.com",
         "MAX_STORE": "0",

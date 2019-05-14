@@ -103,7 +103,7 @@
     <plugin name="cordova-plugin-code-push" spec="1.11.18" />
     <plugin name="cordova-plugin-ionic" spec="5.3.0">
         <variable name="APP_ID" value="86d6c346" />
-        <variable name="CHANNEL_NAME" value="Production" />
+        <variable name="CHANNEL_NAME" value="Master" />
         <variable name="UPDATE_METHOD" value="auto" />
         <variable name="UPDATE_API" value="https://api.ionicjs.com" />
         <variable name="MAX_STORE" value="0" />

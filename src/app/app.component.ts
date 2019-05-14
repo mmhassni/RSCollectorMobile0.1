@@ -9,7 +9,7 @@ import {Subscription} from "rxjs";
 import {AuthentificationProvider} from "../providers/authentification/authentification";
 import {StockageProvider} from "../providers/stockage/stockage";
 import {TabsPage} from "../pages/tabs/tabs";
-import {CodePush, SyncStatus} from "@ionic-native/code-push/ngx";
+import {Pro} from "@ionic/pro";
 
 @Component({
   templateUrl: 'app.html'
@@ -27,39 +27,26 @@ export class MyApp {
   public parametresAuthentificationActuelles = null;
   public pageIncident = {component : TabsPage};
 
-  constructor(platform: Platform,public codePush : CodePush , statusBar: StatusBar, splashScreen: SplashScreen, public authentificationProvider : AuthentificationProvider,public stockageProvider : StockageProvider) {
+  public progressBar = 0;
+
+  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public authentificationProvider : AuthentificationProvider,public stockageProvider : StockageProvider) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
 
-      this.codePush.sync({}, (progress) => {
+      Pro.deploy.configure({channel: 'Production',updateMethod:"auto"}).then( onsucces => {
 
-      }).subscribe( (status) => {
-        if(status == SyncStatus.CHECKING_FOR_UPDATE){
-          alert("checking for uodate");
-        }
-        if(status == SyncStatus.DOWNLOADING_PACKAGE){
-          alert("checking for uodate");
-        }
-        if(status == SyncStatus.IN_PROGRESS){
-          alert("checking for uodate");
-        }
-        if(status == SyncStatus.INSTALLING_UPDATE){
-          alert("checking for uodate");
-        }
-        if(status == SyncStatus.UP_TO_DATE){
-          alert("checking for uodate");
-        }
-        if(status == SyncStatus.UPDATE_INSTALLED){
-          alert("checking for uodate");
-        }
-        if(status == SyncStatus.ERROR){
-          alert("checking for uodate");
-        }
+        this.getVersionInfo();
 
-      });
+        this.checkChannel();
+
+        this.performManualUpdate();
+
+      })
+
+
 
     });
 
@@ -83,6 +70,60 @@ export class MyApp {
 
 
   }
+  async getVersionInfo(){
+    const versionInfo = await Pro.deploy.getCurrentVersion();
+    alert(JSON.stringify(versionInfo));
+  }
+
+  async checkChannel() {
+    try {
+      const res = await Pro.deploy.getConfiguration();
+      alert(JSON.stringify(res));
+    } catch (err) {
+      // We encountered an error.
+      // Here's how we would log it to Ionic Pro Monitoring while also catching:
+
+      // Pro.monitoring.exception(err);
+    }
+  }
+
+  async performManualUpdate() {
+
+    /*
+      Here we are going through each manual step of the update process:
+      Check, Download, Extract, and Redirect.
+
+      Ex: Check, Download, Extract when a user logs into your app,
+        but Redirect when they logout for an app that is always running
+        but used with multiple users (like at a doctors office).
+    */
+
+    try {
+      const update = await Pro.deploy.checkForUpdate();
+
+      if (update.available){
+        alert("yes we have available update, on va extraire les update et reloader l app");
+      }
+      else{
+        alert("aucune update, mais on va forcer quand meme");
+      }
+
+      await Pro.deploy.downloadUpdate((progress) => {this.progressBar = progress;});
+      await Pro.deploy.extractUpdate();
+      await Pro.deploy.reloadApp();
+
+      alert("c'est bon on a force avec succés");
+
+    } catch (err) {
+      // We encountered an error.
+      // Here's how we would log it to Ionic Pro Monitoring while also catching:
+      alert(JSON.stringify(err));
+
+      // Pro.monitoring.exception(err);
+    }
+
+  }
+
 
   openPage(page) {
     // Reset the content nav to have just this page
