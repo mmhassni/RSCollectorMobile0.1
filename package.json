@@ -82,12 +82,12 @@
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-ionic": {
-        "APP_ID": "86d6c346",
+        "APP_ID": "48fa63d7",
         "CHANNEL_NAME": "Production",
-        "UPDATE_METHOD": "background",
+        "UPDATE_METHOD": "auto",
         "UPDATE_API": "https://api.ionicjs.com",
-        "MAX_STORE": "2",
-        "MIN_BACKGROUND_DURATION": "30"
+        "MAX_STORE": "0",
+        "WARN_DEBUG": "false"
       },
       "cordova-plugin-code-push": {},
       "cordova-plugin-zip": {}
