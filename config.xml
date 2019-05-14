@@ -41,6 +41,7 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
+        <preference name="DisableDeploy" value="false" />
         <preference name="CodePushDeploymentKey" value="9aHnp0TKTVtICh-GdYNNXuOn5VD386a18e9b-25cd-4357-be1c-3db085cde1bc" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
