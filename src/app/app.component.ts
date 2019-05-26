@@ -36,15 +36,26 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
 
-      Pro.deploy.configure({channel: 'Production',updateMethod:"auto"}).then( onsucces => {
+      try{
 
-        this.getVersionInfo();
+        Pro.deploy.configure({channel: 'Production',updateMethod:"auto"}).then( onsucces => {
 
-        this.checkChannel();
+          this.getVersionInfo();
 
-        this.performManualUpdate();
+          this.checkChannel();
 
-      })
+          this.performManualUpdate();
+
+        })
+
+      }
+      catch (err) {
+      // We encountered an error.
+      // Here's how we would log it to Ionic Pro Monitoring while also catching:
+
+      // Pro.monitoring.exception(err);
+      }
+
 
 
 
@@ -70,15 +81,14 @@ export class MyApp {
 
 
   }
+
   async getVersionInfo(){
-    const versionInfo = await Pro.deploy.getCurrentVersion();
-    alert(JSON.stringify(versionInfo));
+    //const versionInfo = await Pro.deploy.getCurrentVersion();
   }
 
   async checkChannel() {
     try {
-      const res = await Pro.deploy.getConfiguration();
-      alert(JSON.stringify(res));
+      //const res = await Pro.deploy.getConfiguration();
     } catch (err) {
       // We encountered an error.
       // Here's how we would log it to Ionic Pro Monitoring while also catching:
@@ -101,18 +111,19 @@ export class MyApp {
     try {
       const update = await Pro.deploy.checkForUpdate();
 
-      if (update.available){
-        alert("yes we have available update, on va extraire les update et reloader l app");
-      }
-      else{
-        alert("aucune update, mais on va forcer quand meme");
-      }
-
       await Pro.deploy.downloadUpdate((progress) => {this.progressBar = progress;});
       await Pro.deploy.extractUpdate();
       await Pro.deploy.reloadApp();
 
-      alert("c'est bon on a force avec succés");
+      if (update.available){
+        alert("MAJ Effectué");
+
+      }
+      else{
+      }
+
+
+
 
     } catch (err) {
       // We encountered an error.

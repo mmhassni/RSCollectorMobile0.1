@@ -4,6 +4,7 @@ import {Subscription} from "rxjs";
 import {AuthentificationProvider} from "../../providers/authentification/authentification";
 import {StockageProvider} from "../../providers/stockage/stockage";
 import {TabsPage} from "../tabs/tabs";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 
 
@@ -34,16 +35,11 @@ export class AuthentificationPage {
               public navParams: NavParams,
               public events: Events,
               public authentificationProvider : AuthentificationProvider,
-              public stockageProvider : StockageProvider) {
+              public stockageProvider : StockageProvider,
+              public httpClient: HttpClient) {
 
 
-    platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      alert("test");
 
-
-    });
 
 
 
@@ -54,9 +50,48 @@ export class AuthentificationPage {
         console.log(objectImported);
         if(objectImported && objectImported.success) {
 
-          this.stockageProvider.setValue("identifiants",{"login":this.login,"mdp":this.mdp});
-          this.navCtrl.push(TabsPage);
+          this.stockageProvider.setValue("identifiants",
+            {"login":this.login,
+              "mdp":this.mdp});
+
+
+          let headers = new HttpHeaders();
+          headers = headers.set('Accept', "application/json, text/plain," + "*/*");
+
+
+          //headers = headers.set('Origin', 'http://172.20.10.2:8081');
+
+          let formData = new FormData();
+          formData.append('action', "getRows");
+          formData.append('idSession', this.parametresAuthentificationActuelles.data.idSession);
+          formData.append('table', "affectationsecteur");
+          formData.append('page', "1");
+          formData.append('start', "0");
+          formData.append('limit', "-1");
+          formData.append('filter ', '{"simple_filter":"{\\"loginutilisateur\\":\\"' + this.parametresAuthentificationActuelles.data.login + '\\"}"}');
+
+
+
+          this.httpClient.post(
+            "http://172.20.10.2:8081/WEBCORE/MainServlet",
+            formData,
+            {headers: headers}
+            )
+            .subscribe( data => {
+
+              console.log(data);
+              this.parametresAuthentificationActuelles["affectationsecteur"] = data;
+              this.authentificationProvider.update(this.parametresAuthentificationActuelles);
+              this.navCtrl.push(TabsPage);
+
+
+
+            });
+
           this.parametresAuthentificationSubscription.unsubscribe();
+
+
+
 
 
         }

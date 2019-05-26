@@ -22,6 +22,7 @@ export class AboutPage {
 
 
 
+
   @ViewChild('dynamic', {
     read: ViewContainerRef
   }) viewContainerRef: ViewContainerRef;
@@ -48,13 +49,14 @@ export class AboutPage {
     this.informationsActuelles = this.navParams.data.informationsActuelles;
     this.action = this.navParams.data.action;
 
+    if(this.navParams.data.nomTable){
+      this.nomTable = this.navParams.data.nomTable;
+    }
+
     if(this.informationsActuelles && (this.informationsActuelles as any).id){
       this.idEnregistrementGetRow = (this.informationsActuelles as any).id.toString();
     }
 
-    if(this.navParams.data.nomTable){
-      this.nomTable = this.navParams.data.nomTable;
-    }
 
     this.events.subscribe('graphicActuel', graphicActuel => {
       console.log(graphicActuel);
@@ -91,7 +93,7 @@ export class AboutPage {
             let headers = new HttpHeaders();
             headers = headers.set('Accept', "application/json, text/plain," + "*/*");
 
-            //headers = headers.set('Origin', 'http://localhost:8081');
+            //headers = headers.set('Origin', 'http://172.20.10.2:8081');
 
 
             this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
@@ -102,12 +104,39 @@ export class AboutPage {
 
 
                 console.log(this.parametresAuthentificationActuelles.data.idSession);
-                if(this.action == "creer" || this.idEnregistrementGetRow == ""){
+                if(this.action == "refcreer"){
+
+
+
+
+                    this.action = "creer";
+
+                    if(this.navParams.data.localGetRow){
+                      let items = {};
+                      items["id" + this.navParams.data.nomTableParent ] = this.navParams.data.localGetRow.id;
+                      this.fichierJsonGetFields.items =  this.dynamiqueComponentService.bootstrapRowToForm(
+                        {"item":
+                          JSON.stringify(items)
+
+                        },
+                        this.fichierJsonGetFields);
+                    }
+                    this.chargerFormulaire();
+
+
+
+                }
+                else if(this.action == "refmodifier"){
+                  this.action = "modifier";
+                  this.bootstrapGetRowToForm();
+
+                }
+                else if(this.action == "creer" || this.idEnregistrementGetRow == ""){
 
                   if(this.navParams.data.localGetRow){
                     this.fichierJsonGetFields.items =  this.dynamiqueComponentService.bootstrapRowToForm(
                       {"item":this.navParams.data.localGetRow},
-                                       this.fichierJsonGetFields);
+                      this.fichierJsonGetFields);
                   }
                   this.chargerFormulaire();
 
@@ -179,13 +208,14 @@ export class AboutPage {
     headers = headers.set('Accept', "application/json, text/plain," + "*/*");
 
 
-    //headers = headers.set('Origin', 'http://localhost:8081');
+    //headers = headers.set('Origin', 'http://172.20.10.2:8081');
 
     let formData = new FormData();
     formData.append('action', "getRow");
     formData.append('table', this.nomTable);
     formData.append('filter', '{"simple_filter":"{\\"id\\":'+ this.idEnregistrementGetRow +'}"}');
     formData.append('idSession', this.parametresAuthentificationActuelles.data.idSession);
+
 
     return this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers});
 

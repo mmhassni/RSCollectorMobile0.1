@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Subscription} from "rxjs";
 import {AuthentificationProvider} from "../../providers/authentification/authentification";
@@ -22,6 +22,7 @@ import {GenericFilterPage} from "../generic-filter/generic-filter";
 })
 export class ListeIncidentPage {
 
+  tags = [];
 
   public parametresAuthentificationSubscription : Subscription;
   public parametresAuthentificationActuelles = null;
@@ -38,9 +39,10 @@ export class ListeIncidentPage {
   public pageTableRef = ListeActionPage;
   public page = "1";
   public start = "0";
-  public limit = "25";
+  public limit = "100";
+  public sort = '[{"property":"id","direction":"DESC"}]';
   public filter = "";
-  //public filter = '{"simple_filter":"{\\"idincident\\":'+ this.idEnregistrementGetRow +'}"}';
+  public advancedFilter = "";
 
   public fichierJsonGetFields = null;
   public fichierJsonGetRows = [];
@@ -50,13 +52,16 @@ export class ListeIncidentPage {
   public listeAction = [];
   public listeJointureRef  = {};
   public role = null;
-  public filtreFormulaire = {};
+  public filtreFormulaire = null;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,public events: Events, public authentificationProvider : AuthentificationProvider,public httpClient : HttpClient, public actionSheetCtrl: ActionSheetController) {
+  constructor(public navCtrl: NavController,  public navParams: NavParams,public events: Events, public authentificationProvider : AuthentificationProvider,public httpClient : HttpClient, public actionSheetCtrl: ActionSheetController) {
 
 
     //on recupere les informations du push
     this.informationsActuelles = this.navParams.data.informationsActuelles;
+
+
+
     if(this.navParams.data.filter){
       this.filter = '{"simple_filter":"{\\"'+ this.navParams.data.filter.idChampFiltre +'\\":'+ this.navParams.data.filter.valeurFiltre +'}"}'
     }
@@ -68,6 +73,18 @@ export class ListeIncidentPage {
       (objectImported : any) => {
         this.parametresAuthentificationActuelles = objectImported;
         if(this.parametresAuthentificationActuelles && this.parametresAuthentificationActuelles.success){
+
+          let filter = '{"advanced_filter":"{\\"query\\":\\"';
+          for(let i = 0 ; i < this.parametresAuthentificationActuelles["affectationsecteur"].items.length ; i++){
+
+            filter = filter + "f[" + "idsecteur" + "] = " + this.parametresAuthentificationActuelles["affectationsecteur"].items[i].idsecteur + " or ";
+
+          }
+
+          filter = filter.substring(0,filter.length -3);
+          filter = filter + '\\"}"}';
+
+          this.filter = filter;
 
           this.role = JSON.parse(this.parametresAuthentificationActuelles.data.filter).idrole;
           this.refresh();
@@ -97,6 +114,8 @@ export class ListeIncidentPage {
     formData.append('page', this.page);
     formData.append('start', this.start);
     formData.append('limit', this.limit);
+    formData.append('sort', this.sort);
+
     if(this.filter){
       formData.append('filter', this.filter);
     }
@@ -105,7 +124,7 @@ export class ListeIncidentPage {
     let headers = new HttpHeaders();
     headers = headers.set('Accept', "application/json, text/plain," + "*/*");
 
-    //headers = headers.set('Origin', 'http://localhost:8081');
+    //headers = headers.set('Origin', 'http://172.20.10.2:8081');
 
 
     this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
@@ -133,7 +152,7 @@ export class ListeIncidentPage {
     headers = new HttpHeaders();
     headers = headers.set('Accept', "application/json, text/plain," + "*/*");
 
-    //headers = headers.set('Origin', 'http://localhost:8081');
+    //headers = headers.set('Origin', 'http://172.20.10.2:8081');
 
 
     this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})
@@ -158,7 +177,7 @@ export class ListeIncidentPage {
             let headers = new HttpHeaders();
             headers = headers.set('Accept', "application/json, text/plain," + "*/*");
 
-            //headers = headers.set('Origin', 'http://localhost:8081');
+            //headers = headers.set('Origin', 'http://172.20.10.2:8081');
 
             (function(classe,index){
 
@@ -329,26 +348,7 @@ export class ListeIncidentPage {
 
     event.stopPropagation();
 
-    /*
 
-    let navOptions = {
-      animation: 'ios-transition',
-      duration: 1000
-    };
-
-    let parametres = {
-      informationsActuelles: item,
-      action: "modifier",
-      nomTable:this.nomTable
-    };
-
-
-    this.navCtrl.push(
-      AboutPage,
-      parametres,
-      navOptions);
-
-      */
 
     let buttons = [];
 
@@ -404,9 +404,19 @@ export class ListeIncidentPage {
               duration: 1000
             };
 
+            let action = "refcreer";
+
+            if(this.listeAction[i].themeAction == "declaration"){
+
+
+              action = "refmodifier";
+
+            }
             let parametres = {
+              localGetRow: item,
               informationsActuelles: item,
-              action: "modifier",
+              action: action,
+              nomTableParent:this.nomTable,
               nomTable:this.listeAction[i].themeAction
             };
 
@@ -453,6 +463,7 @@ export class ListeIncidentPage {
       if(this.nomTableRef){
         parametres["filter"] = {"idChampFiltre": "id" + this.nomTable , "valeurFiltre": item.id };
       }
+      parametres["listeJointureRef"] = this.listeJointureRef;
 
       this.navCtrl.push(
         this.pageTableRef,
@@ -472,7 +483,12 @@ export class ListeIncidentPage {
 
     this.events.subscribe('filtreFormulaire', filtreActuel => {
 
-      this.filtreFormulaire = filtreActuel;
+      this.filtreFormulaire = filtreActuel["ids"];
+
+      this.tags = [];
+      for(let pp in filtreActuel["libelles"]){
+        this.tags.push(filtreActuel["libelles"][pp])
+      }
 
     });
 
@@ -510,6 +526,7 @@ export class ListeIncidentPage {
       informationsActuelles: {},
       fichierJsonGetFields: getFieldsPageFiltre,
       action: "modifier",
+      localGetRow: this.filtreFormulaire,
       nomTable:this.nomTable
     };
 
@@ -548,7 +565,8 @@ export class ListeIncidentPage {
     if(value){
       let dateInput = new Date(value);
       if(format == ""){
-        dateRetour = dateInput.toISOString().substring(0,10)+" "+ dateInput.toISOString().substring(11,19);
+        //dateRetour = dateInput.toISOString().substring(0,10)+" "+ dateInput.toISOString().substring(11,19);
+        dateRetour = dateInput.toISOString().substring(0,10);
 
       }
     }
@@ -567,6 +585,14 @@ export class ListeIncidentPage {
         }
       }
     }
+
+    /*
+    if(this.parametresAuthentificationActuelles.data.role == 1 && (toLibelle("idstatut",item.idstatut) == "Traite" )  ){
+
+      isConformeAuFiltre = false
+
+    }
+    */
     return isConformeAuFiltre;
   }
 

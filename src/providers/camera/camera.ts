@@ -65,6 +65,7 @@ export class CameraProvider {
       mediaType: this.camera.MediaType.PICTURE,
       targetWidth: 600,
       targetHeight: 1000
+
     };
 
 

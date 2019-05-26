@@ -99,9 +99,9 @@ export class GenericFilterPage {
 
               this.fichierJsonGetFields =  this.navParams.data.fichierJsonGetFields;
 
-              if(this.navParams.data.localGetRow){
+              if(this.navParams.data.localGetRow && this.navParams.data.localGetRow != {}){
                 this.fichierJsonGetFields.items =  this.dynamiqueComponentService.bootstrapRowToForm(
-                  {"item":this.navParams.data.localGetRow},
+                  {"item":JSON.stringify(this.navParams.data.localGetRow)},
                   this.fichierJsonGetFields);
               }
               this.chargerFormulaire();
@@ -159,7 +159,7 @@ export class GenericFilterPage {
     headers = headers.set('Accept', "application/json, text/plain," + "*/*");
 
 
-    //headers = headers.set('Origin', 'http://localhost:8081');
+    //headers = headers.set('Origin', 'http://172.20.10.2:8081');
 
     let formData = new FormData();
     formData.append('action', "getRow");
@@ -195,13 +195,19 @@ export class GenericFilterPage {
 
   enregistrerInformations() {
 
-    let filtreFormulaire = {};
+    let filtreFormulaire = {"ids":{},"libelles":{}};
     for(let i = 0; i< (this.viewContainerRef as any)._embeddedViews.length; i++){
 
-      filtreFormulaire[(this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["id"]] = (this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["value"];
+      filtreFormulaire["ids"][(this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["id"]] = (this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["value"];
+      if((this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["value"]){
+        filtreFormulaire["libelles"][(this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["id"]] = (this.viewContainerRef as any)._embeddedViews[i].nodes[1].instance["libelle"];
+      }
 
     }
     this.events.publish('filtreFormulaire', filtreFormulaire);
+    this.navCtrl.pop();
+
+
 
 
 
@@ -224,4 +230,16 @@ export class GenericFilterPage {
 
 
   }
+
+  annulerFiltre() {
+
+    console.log("annuler filtre");
+
+    let filtreFormulaire = {};
+    this.events.publish('filtreFormulaire', filtreFormulaire);
+    this.navCtrl.pop();
+
+  }
+
+
 }

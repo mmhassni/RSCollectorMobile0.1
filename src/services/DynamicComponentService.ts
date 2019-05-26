@@ -10,15 +10,29 @@ import {DynamicLocationComponent} from "./dynamic.location.component";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {DynamicDateComponent} from "./dynamic.date.component";
 import {DynamicTextareaComponent} from "./dynamic.textarea.component";
+import {Subscription} from "rxjs";
+import {AuthentificationProvider} from "../providers/authentification/authentification";
+import {Device} from "@ionic-native/device";
 
 @Injectable()
 export class DynamiqueComponentService {
 
 
   public rootViewContainer: any;
+  public parametresAuthentificationSubscription : Subscription;
+  public parametresAuthentificationActuelles = null;
 
-  constructor(private factoryResolver: ComponentFactoryResolver,public httpClient : HttpClient) {
+  constructor(private factoryResolver: ComponentFactoryResolver,private device: Device, public httpClient : HttpClient, public authentificationProvider : AuthentificationProvider) {
     console.log("On est arrive au service DynamiqueComponentService");
+
+    //Importation des donnees de connexion
+    this.parametresAuthentificationSubscription = this.authentificationProvider.parametresAuthentification$.subscribe(
+      (objectImported : any) => {
+        this.parametresAuthentificationActuelles = objectImported;
+      }
+    );
+    this.authentificationProvider.emit();
+
   }
 
   //prepare la requete http pour l envoyer
@@ -42,22 +56,50 @@ export class DynamiqueComponentService {
 
         //si l'action est "modifier" alors on doit preparer egalement l'objet editData
         if(action == "modifier" || action == "creer") {
-          if(typeof fichierJsonGetFields.items[i].value == "string") {
-            if("date_add" == fichierJsonGetFields.items[i].id.toString()) {
 
-              /*
-              let dateTemp = new Date();
-              console.log(dateTemp.getTime());
-              let dateTempMilSec = dateTemp.getTime().toString();
-              let dateTempMilSecCopy = dateTempMilSec;
-              */
+          //si le composant est de type readonly alor sne doit meme pas l'envoyer dans les parametres
+          if(fichierJsonGetFields.items[i].readonly == "false"){
+            if(typeof fichierJsonGetFields.items[i].value == "string") {
+
+              //else if("uid_add" == fichierJsonGetFields.items[i].id.toString()) {
+              if("uid_add" == fichierJsonGetFields.items[i].id.toString()) {
+                if(this.device.uuid){
+                  editData["uid_add"] = this.device.uuid.toString();
+                  formData.append(fichierJsonGetFields.items[i].id, this.device.uuid.toString());
+                }else{
+                  editData["uid_add"] = "web";
+                  formData.append(fichierJsonGetFields.items[i].id, "web");
+                }
+
+
+
+              }
+              else{
+                editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value.toString();
+                formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
+
+
+              }
+            }
+            else if("date_add" == fichierJsonGetFields.items[i].id.toString()) {
+
               editData["date_add"] = (new Date(fichierJsonGetFields.items[i].value)).getTime();
               formData.append(fichierJsonGetFields.items[i].id, (new Date(fichierJsonGetFields.items[i].value)).getTime().toString() );
             }
-            else{
+
+            else if ("shape" == fichierJsonGetFields.items[i].id) {
+
+            }
+            else if("epsg" == fichierJsonGetFields.items[i].id.toString()){
+
               editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value.toString();
               formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
 
+
+            }
+            else{
+              editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value;
+              formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
 
             }
           }
@@ -68,21 +110,7 @@ export class DynamiqueComponentService {
             }
 
           }
-          else if ("shape" == fichierJsonGetFields.items[i].id) {
 
-          }
-          else if("epsg" == fichierJsonGetFields.items[i].id.toString()){
-
-            editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value.toString();
-            formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
-
-
-          }
-          else{
-            editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value;
-            formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
-
-          }
         }
 
 
@@ -248,6 +276,8 @@ export class DynamiqueComponentService {
 
           }
           inputListPropertiesTempLocation = inputListProperties;
+          inputListPropertiesTempLocation["x"] = inputListPropertiesTempX["value"];
+          inputListPropertiesTempLocation["y"] = inputListPropertiesTempY["value"];
           console.log(inputListProperties);
 
 

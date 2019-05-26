@@ -39,10 +39,13 @@ export class DynamicComponent implements OnInit {
 
       if (graphicActuel && this.id == "x") {
         this.value = (graphicActuel as any).geometry.longitude.toFixed(6);
+        this.visible = true;
       }
 
       if (graphicActuel && this.id == "y") {
         this.value = (graphicActuel as any).geometry.latitude.toFixed(6);
+        this.visible = true;
+
       }
 
       if(graphicActuel && this.id == "wkt"){
@@ -51,6 +54,8 @@ export class DynamicComponent implements OnInit {
           " " +
           (graphicActuel as any).geometry.latitude.toFixed(6) +
           ")";
+        this.visible = false;
+
       }
 
     });
@@ -61,6 +66,13 @@ export class DynamicComponent implements OnInit {
 
     if(this.type == "string"){
       this.type = "text";
+    }
+
+    if(this.visible == "in"){
+      this.visible= true;
+    }
+    if(this.visible == "out"){
+      this.visible= false;
     }
 
     //si le champ value n'a pas encore etait saisie alors on doit l initiliser par initvalue
@@ -75,6 +87,8 @@ export class DynamicComponent implements OnInit {
     if(this.id == "x" || this.id == "y"){
       if(this.value == 0){
         this.value = "";
+        this.visible = false;
+
       }
     }
 

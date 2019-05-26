@@ -41,34 +41,53 @@ export class DynamicDateComponent implements OnInit {
 
 
 
-    //si le champ value n'a pas encore etait saisie alors on doit l initiliser par initvalue
-    let date=new Date(this.value);
 
+      /*
+      //si le champ value n'a pas encore etait saisie alors on doit l initiliser par initvalue
+      let date=new Date(this.value);
 
-    let day = date.getDate().toString();
-    let month = (date.getMonth() + 1).toString();
-    let year = date.getFullYear();
-
-
-    if((date.getDate()) < 10){
-      day = "0" + (date.getDate()).toString();
-    }
-    if((date.getMonth() + 1) < 10){
-      month = "0" + (date.getMonth() + 1).toString();
-    }
-
-    this.value = year + "-" + month + "-" + day ;
-
-
-
-    //si le champ value n'a pas encore etait saisie alors on doit l initiliser par initvalue
-    if (!this.tag) {
-      this.tag = this.initvalue;
-      //si la valeur est toujours null alors il vaut mieux la remplacer par "" au lieu de 0 pour le type text
-      if( !this.tag && this.type == "text"){
-        this.tag = "";
+      if(this.visible == "in"){
+        this.visible= true;
       }
+      if(this.visible == "out"){
+        this.visible= false;
+      }
+
+      let day = date.getDate().toString();
+      let month = (date.getMonth() + 1).toString();
+      let year = date.getFullYear();
+
+
+      if((date.getDate()) < 10){
+        day = "0" + (date.getDate()).toString();
+      }
+      if((date.getMonth() + 1) < 10){
+        month = "0" + (date.getMonth() + 1).toString();
+      }
+
+      this.value = year + "-" + month + "-" + day ;
+
+      */
+
+    this.value = (new Date(this.value)).getTime();
+
+    if(this.visible == "in"){
+      this.visible= true;
     }
+    if(this.visible == "out"){
+      this.visible= false;
+    }
+
+
+
+    //si le champ value n'a pas encore etait saisie alors on doit l initiliser par initvalue
+      if (!this.tag) {
+        this.tag = this.initvalue;
+        //si la valeur est toujours null alors il vaut mieux la remplacer par "" au lieu de 0 pour le type text
+        if( !this.tag && this.type == "text"){
+          this.tag = "";
+        }
+      }
 
 
 

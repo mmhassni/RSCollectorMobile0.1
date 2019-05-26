@@ -18,8 +18,8 @@ import {MapLocationPage} from "../pages/map-location/map-location";
                  -->
                </ion-label>
             
-               <button *ngIf="readonly" padding ion-button clear  item-end (click)="recupererGraphic()">
-                 Mesurer
+               <button *ngIf="readonly"  ion-button clear  item-end (click)="recupererGraphic()">
+                 <ion-icon style="zoom:1.8; margin-right: 0px;padding-right: 0px;" name="md-pin"></ion-icon>
                </button>
             
              </ion-item>`
@@ -66,6 +66,7 @@ export class DynamicLocationComponent  implements OnInit {
   ngOnInit(): void {
 
 
+
   }
 
   ionViewDidEnter() {
@@ -75,7 +76,7 @@ export class DynamicLocationComponent  implements OnInit {
 
   recupererGraphic() {
 
-    this.navCtrl.push(MapLocationPage);
+    this.navCtrl.push(MapLocationPage,{x: this.x, y: this.y});
   }
 
 

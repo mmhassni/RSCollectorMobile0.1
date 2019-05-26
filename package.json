@@ -23,14 +23,15 @@
     "@ionic-native/camera": "^4.20.0",
     "@ionic-native/code-push": "^5.5.1",
     "@ionic-native/core": "~4.18.0",
+    "@ionic-native/device": "^4.20.0",
     "@ionic-native/file-path": "^5.3.0",
     "@ionic-native/geolocation": "^4.20.0",
     "@ionic-native/http": "^5.4.0",
     "@ionic-native/splash-screen": "~4.18.0",
     "@ionic-native/status-bar": "~4.18.0",
+    "@ionic-native/uid": "^4.20.0",
     "@ionic/pro": "^2.0.4",
     "@ionic/storage": "^2.2.0",
-    "code-push": "2.0.6",
     "cordova-android": "7.1.4",
     "cordova-ios": "4.5.5",
     "cordova-plugin-advanced-http": "^2.0.7",
@@ -47,14 +48,17 @@
     "cordova-plugin-ionic-webview": "^3.1.2",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
+    "cordova-plugin-uid": "1.3.0",
     "cordova-plugin-whitelist": "^1.3.3",
     "cordova-plugin-zip": "^3.1.0",
     "cordova-sqlite-storage": "3.2.0",
     "esri-loader": "^2.9.1",
     "ionic-angular": "3.9.2",
+    "ionic-tags-input": "^0.1.2",
     "ionicons": "3.0.0",
     "rxjs": "5.5.11",
     "sw-toolbox": "3.6.0",
+    "wellknown": "^0.5.0",
     "zone.js": "0.8.29"
   },
   "devDependencies": {
@@ -91,7 +95,8 @@
         "WARN_DEBUG": "false"
       },
       "cordova-plugin-code-push": {},
-      "cordova-plugin-zip": {}
+      "cordova-plugin-zip": {},
+      "cordova-plugin-dreamover-uid": {}
     },
     "platforms": [
       "android",

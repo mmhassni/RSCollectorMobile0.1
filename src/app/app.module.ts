@@ -36,6 +36,9 @@ import {DynamicTextareaComponent} from "../services/dynamic.textarea.component";
 import {ListeActionPage} from "../pages/liste-action/liste-action";
 import {GenericFilterPage} from "../pages/generic-filter/generic-filter";
 import {CodePush} from "@ionic-native/code-push/ngx";
+import { Device } from '@ionic-native/device';
+
+import {IonTagsInputModule} from "ionic-tags-input";
 
 
 
@@ -60,6 +63,7 @@ import {CodePush} from "@ionic-native/code-push/ngx";
 
   ],
   imports: [
+    IonTagsInputModule,
     BrowserModule,
     HttpClientModule,
     IonicModule.forRoot(MyApp),
@@ -93,6 +97,7 @@ import {CodePush} from "@ionic-native/code-push/ngx";
     CameraProvider,
     Camera,
     FilePath,
+    Device,
     Geolocation,
     HTTP,
     AuthentificationProvider,

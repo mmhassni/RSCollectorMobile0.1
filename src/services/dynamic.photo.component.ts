@@ -64,6 +64,13 @@ export class DynamicPhotoComponent implements OnInit {
       this.value = this.initvalue;
     }
 
+    if(this.visible == "in"){
+      this.visible= true;
+    }
+    if(this.visible == "out"){
+      this.visible= false;
+    }
+
   }
 
 

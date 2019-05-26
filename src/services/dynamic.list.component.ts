@@ -14,12 +14,14 @@ import {Events} from "ionic-angular";
                 <ion-select (ionChange)="onChange()"  [disabled]="readonly" name = "libelle" [(ngModel)]="value" >
 
                     <ion-option  *ngFor="let el of listValues" [value]="el.value">{{el.libelle}}</ion-option>
+                    <ion-option [value]="">Aucun</ion-option>
                     
                   
                 </ion-select>
     
              </ion-item>`
 })
+
 export class DynamicListComponent implements OnInit{
 
 
@@ -64,6 +66,13 @@ export class DynamicListComponent implements OnInit{
       this.initvalues = [];
     }
 
+    if(this.visible == "in"){
+      this.visible= true;
+    }
+    if(this.visible == "out"){
+      this.visible= false;
+    }
+
 
     //si le champ value n'a pas encore etait saisie alors on doit l initiliser par initvalue
     if (!this.value) {
@@ -91,7 +100,7 @@ export class DynamicListComponent implements OnInit{
       let headers = new HttpHeaders();
       headers = headers.set('Accept', "application/json, text/plain," + "*/*");
 
-      //headers = headers.set('Origin', 'http://localhost:8081');
+      //headers = headers.set('Origin', 'http://172.20.10.2:8081');
 
 
       this.httpClient.post("http://172.20.10.2:8081/WEBCORE/MainServlet",formData, {headers: headers})

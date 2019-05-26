@@ -11,7 +11,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Liste Incident</ion-title>
+    <ion-title>Historique</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -26,16 +26,26 @@
 
   <ion-item>
     <ion-label style="color: #000;" >
-      Date : greger
+      Type Panne : {{toLibelle("idtypepanne",informationsActuelles?.idtypepanne)}} ({{toLibelle("idvoletpanne",informationsActuelles?.idvoletpanne)}})
     </ion-label>
-
   </ion-item>
 
   <ion-item>
     <ion-label style="color: #000;" >
-      Type : ergger
+      Date déclaration: {{ toDate(informationsActuelles?.date_add,"") }}
     </ion-label>
+  </ion-item>
 
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Description : {{informationsActuelles?.description}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Statut : {{toLibelle("idstatut",informationsActuelles?.idstatut)}}
+    </ion-label>
   </ion-item>
 
   <ion-item padding="0">
@@ -45,21 +55,22 @@
 
   <ion-list>
     <button ion-item *ngFor="let item of fichierJsonGetRowsFiltre"   (click)="itemTapped($event, item)">
-      {{item?.id}}
-      <p>{{item?.description}}</p>
+      Statut: {{toLibelle("idstatut",item?.idstatut)}}
+      <p>Observations: {{item?.observation}}</p>
+      <p>Date : {{ toDate(item?.date_add,"") }}</p>
       <ion-icon style="zoom:0.85;" name="list-box" (click)="detailItemTapped($event, item)" item-end></ion-icon>
 
     </button>
   </ion-list>
 
-  <button *ngIf="derniereAction() && derniereAction().idstatut == 2" type="submit" color="secondary" ion-button  block (click)="rejeterIncident()">
+  <!--button *ngIf="derniereAction() && derniereAction().idstatut == 2" type="submit" color="secondary" ion-button  block (click)="rejeterIncident()">
     Rejeter
-  </button>
-  <button *ngIf="derniereAction() && derniereAction().idstatut == 2" type="submit" color="secondary" ion-button  block (click)="cloturerIncident()">
+  </button-->
+  <!--button *ngIf="derniereAction() && derniereAction().idstatut == 2" type="submit" color="secondary" ion-button  block (click)="cloturerIncident()">
     Cloturer
-  </button>
-  <button *ngIf="derniereAction() && derniereAction().idstatut == 3" type="submit" color="secondary" ion-button  block (click)="traiterIncident()">
+  </button-->
+  <!--button *ngIf="derniereAction() && derniereAction().idstatut == 3" type="submit" color="secondary" ion-button  block (click)="traiterIncident()">
     Traiter
-  </button>
+  </button-->
 
 </ion-content>

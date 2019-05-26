@@ -2,6 +2,8 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {Subject} from "rxjs";
 import {ToastController} from "ionic-angular";
+import { Device } from '@ionic-native/device';
+
 
 
 /*
@@ -20,7 +22,7 @@ export class AuthentificationProvider {
   public login = "";
   public mdp = "";
 
-  constructor(public httpClient: HttpClient, public toastCtrl : ToastController) {
+  constructor(private device: Device,public httpClient: HttpClient, public toastCtrl : ToastController) {
     console.log('Hello AuthentificationProvider Provider');
     //pour la premiere fois la fonction emitUtilisateur ne poura pas s'executer toute seule
     //this.emit();
@@ -60,7 +62,7 @@ export class AuthentificationProvider {
     //headers = headers.set('Upgrade-Insecure-Requests', '1');
     //headers = headers.set('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8');
     //headers = headers.set('enctype', 'multipart/form-data');
-    //headers = headers.set('Origin', 'http://172.20.10.2:8100');
+    //headers = headers.set('Origin', 'http://localhost:8100');
 
 
 
@@ -76,7 +78,16 @@ export class AuthentificationProvider {
 
 
           this.parametresAuthentification = data;
+
+          (this.parametresAuthentification as any).data["role"] = JSON.parse((data as any).data.filter).idrole;
           (this.parametresAuthentification as any).data["profile"] = "technicienPrestataire";
+          try{
+            (this.parametresAuthentification as any).data["ime"] = this.device.uuid;
+            //alert(JSON.stringify(this.device));
+          }
+          catch(e){
+            console.log(e);
+          }
 
 
           let toast = this.toastCtrl.create({

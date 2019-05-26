@@ -48,6 +48,13 @@ export class DynamicTextareaComponent implements OnInit {
       }
     }
 
+    if(this.visible == "in"){
+      this.visible= true;
+    }
+    if(this.visible == "out"){
+      this.visible= false;
+    }
+
 
 
     //si le champ value n'a pas encore etait saisie alors on doit l initiliser par initvalue
