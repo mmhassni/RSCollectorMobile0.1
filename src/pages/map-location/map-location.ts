@@ -3,7 +3,6 @@ import {Events, IonicPage, NavController, NavParams, Platform} from 'ionic-angul
 import { loadModules } from 'esri-loader';
 import { Geolocation } from '@ionic-native/geolocation';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {TabsPage} from "../tabs/tabs";
 import {Subscription} from "rxjs";
 import {AuthentificationProvider} from "../../providers/authentification/authentification";
 import * as wellknow from 'wellknown';
@@ -38,6 +37,12 @@ export class MapLocationPage {
   public parametresAuthentificationSubscription : Subscription;
   public parametresAuthentificationActuelles = null;
 
+  public status = {
+    1: "Déclaré",
+    2: "Traité",
+    3: "Rejeté",
+    4: "Cloturé",
+  };
 
   constructor(public navCtrl: NavController,public authentificationProvider : AuthentificationProvider,public events: Events, public httpClient: HttpClient, public navParams: NavParams,public platform: Platform, private geolocation: Geolocation) {
 
@@ -98,10 +103,13 @@ export class MapLocationPage {
 
 
     // Load the ArcGIS API for JavaScript modules
-    const [ TextSymbol, Font, Point, Color, geometryJsonUtils, Map, MapView,Locate, Graphic,SimpleFillSymbol,SimpleLineSymbol
+    const [
+      //Legend, TextSymbol, Font,
+      Point, Color, geometryJsonUtils, Map, MapView,Locate, Graphic,SimpleFillSymbol,SimpleLineSymbol
     ]:any = await loadModules([
-      "esri/symbols/TextSymbol",
-      "esri/symbols/Font",
+      //"esri/widgets/Legend",
+      //"esri/symbols/TextSymbol",
+      //"esri/symbols/Font",
       "esri/geometry/Point",
       'esri/Color',
       'esri/geometry/support/jsonUtils',
@@ -123,6 +131,8 @@ export class MapLocationPage {
     });
 
 
+
+
     let symbol = {
       type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
       color: [255, 0, 255],
@@ -140,7 +150,7 @@ export class MapLocationPage {
         // create the map view at the DOM element in this component
         container: this.mapEl.nativeElement,
         center: [(this.navParams as any).data.x, (this.navParams as any).data.y],
-        zoom: 16
+        zoom: 20
       });
 
       mapView.map = map;
@@ -162,12 +172,14 @@ export class MapLocationPage {
         // create the map view at the DOM element in this component
         container: this.mapEl.nativeElement,
         //center: [this.currentLong, this.currentLat],
-        center: [-5.1495, 33.80804],
-        zoom: 16
+        center: [-6.358620, 32.335308],
+        zoom: 10
       });
 
       mapView.map = map;
     }
+
+
 
 
     let headers = new HttpHeaders();
@@ -179,7 +191,7 @@ export class MapLocationPage {
     let formData = new FormData();
     formData.append('action', "getRows");
     formData.append('idSession', this.parametresAuthentificationActuelles.data.idSession);
-    formData.append('table', "commune");
+    formData.append('table', "communegeom");
     formData.append('page', "1");
     formData.append('start', "0");
     formData.append('limit', "-1");
@@ -325,13 +337,14 @@ export class MapLocationPage {
           symbol: symbolPointCentroides
           ,
           attributes: {
-
+              statut : this.status[coucheActuel[i]["idstatut"]],
+              date : this.toDate(coucheActuel[i]["date_add"],""),
+              description : coucheActuel[i]["description"]
           },
           popupTemplate: {
-            title: "<h3>{Traité}</h3>" +
-              "<p>Date : 2019-09-25</p>" +
-              "<p>Ordre : {Ordre}</p>" +
-              "<p>Observation : En attente de la validation</p>"
+            title: "<h3>{statut}</h3>" +
+              "<p>Date : {date}</p>" +
+              "<p>Déscription : {statut}</p>"
             /*
             ,
             content:
@@ -361,108 +374,6 @@ export class MapLocationPage {
 
         })
         */
-      }
-
-    });
-
-
-    //ajout de la couche des titres DA
-    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9091/requestAny/" +
-      "select%20%20id,collectivi,ordre," + '"vocation p"' + ",superficie,%20St_astext(shape)%20as%20shape%20" +
-      "from%20occupirr").subscribe( data => {
-
-      let coucheActuel = (data as any).features;
-
-      let symobologiePolygon =  new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
-        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-          new Color([255,255,255]),0.5), new Color([155,255,100,0.10]));
-
-      for(let i = 0; i< coucheActuel.length;i++){
-
-        //let jsontext = this.polygonJsonToTerraformer(coucheActuel[i].shape);
-
-        let jsontext = wellknow.parse(coucheActuel[i].shape).coordinates[0];
-
-
-
-        let pointGraphic = new Graphic({
-          geometry: geometryJsonUtils.fromJSON( {"rings":jsontext} ),
-          symbol: symobologiePolygon
-          ,
-          attributes: {
-            Proprietaire: (coucheActuel[i] as any).collectivi,
-            Superficie: (coucheActuel[i] as any).superficie,
-            Ordre: (coucheActuel[i] as any).ordre,
-            Contenance: (coucheActuel[i] as any)["vocation p"]
-          },
-          popupTemplate: {
-            title: "<h3>{Proprietaire}</h3>" +
-              "<p>Superficie : {Superficie}</p>" +
-              "<p>Ordre : {Ordre}</p>" +
-              "<p>Contenance : {Contenance}</p>"
-            /*
-            ,
-            content:
-              "<p>Superficie : {Superficie}</p>" +
-              "<p>Contenance : {Contenance}</p>"
-
-            */
-
-          }
-
-
-        });
-
-
-
-
-        mapView.graphics.add( pointGraphic );
-
-
-        /*
-        console.log((Terraformer as any).WKT.parse('LINESTRING (30 10, 10 30, 40 40)'));
-        console.log((Terraformer as any).WKT.parse(this.listeCoucheTitreDA[i].shape));
-
-        (Terraformer as any).ArcGIS.convert({
-          type:"polygon",
-
-
-        })
-        */
-      }
-
-    });
-
-    //ajout de la couche des titres DA
-    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9091/requestAny/" +
-      "select%20%20id,%20St_astext(shape)%20as%20shape%20" +
-      "from%20titredademo").subscribe( data => {
-
-      let coucheActuel = (data as any).features;
-
-      let symobologiePolygon =  new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
-        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255,255,0]),1),
-        new Color([155,255,100,0]));
-
-      for(let i = 0; i< coucheActuel.length;i++){
-
-        //let jsontext = this.polygonJsonToTerraformer(coucheActuel[i].shape);
-        let jsontext = wellknow.parse(coucheActuel[i].shape).coordinates[0];
-
-        console.log( JSON.stringify(wellknow.parse(coucheActuel[i].shape).coordinates) );
-
-        console.log(wellknow.parse(coucheActuel[i].shape));
-
-        let pointGraphic = new Graphic({
-          geometry: geometryJsonUtils.fromJSON( {"rings":jsontext} ),
-          symbol: symobologiePolygon
-
-
-
-        });
-
-        mapView.graphics.add( pointGraphic );
-
       }
 
     });
@@ -486,6 +397,7 @@ export class MapLocationPage {
       MapLocationPage.graphicActuel = graphicActuel;
       mapView.graphics.add(graphicActuel);
       console.log("X: " + evt.mapPoint.longitude.toString() + ", <br>Y: " + evt.mapPoint.latitude.toString());
+
     });
 
 
@@ -508,6 +420,24 @@ export class MapLocationPage {
     MapLocationPage.popedGraphicActuel = MapLocationPage.graphicActuel;
     this.events.publish('graphicActuel', MapLocationPage.popedGraphicActuel);
     this.navCtrl.pop();
+  }
+
+  toDate(value,format){
+
+    let dateRetour = null;
+
+    if(value){
+      let dateInput = new Date(value);
+      if(format == ""){
+        //dateRetour = dateInput.toISOString().substring(0,10)+" "+ dateInput.toISOString().substring(11,19);
+        dateRetour = dateInput.toISOString().substring(0,10);
+
+      }
+    }
+
+
+    return dateRetour;
+
   }
 
 

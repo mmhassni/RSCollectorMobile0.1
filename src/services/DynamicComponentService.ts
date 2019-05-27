@@ -74,6 +74,12 @@ export class DynamiqueComponentService {
 
 
               }
+              else if("user_add" == fichierJsonGetFields.items[i].id.toString()){
+
+                formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);
+
+
+              }
               else{
                 editData[fichierJsonGetFields.items[i].id] = fichierJsonGetFields.items[i].value.toString();
                 formData.append(fichierJsonGetFields.items[i].id, fichierJsonGetFields.items[i].value);

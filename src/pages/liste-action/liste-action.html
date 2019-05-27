@@ -21,32 +21,37 @@
 
 
   <ion-item padding="0">
-    <h1 >Informations:</h1>
+    <h1 >Déclaration:</h1>
   </ion-item>
 
-  <ion-item>
-    <ion-label style="color: #000;" >
-      Type Panne : {{toLibelle("idtypepanne",informationsActuelles?.idtypepanne)}} ({{toLibelle("idvoletpanne",informationsActuelles?.idvoletpanne)}})
-    </ion-label>
-  </ion-item>
+  <ion-card ion-item >
 
-  <ion-item>
-    <ion-label style="color: #000;" >
-      Date déclaration: {{ toDate(informationsActuelles?.date_add,"") }}
-    </ion-label>
-  </ion-item>
+    <ion-item>
+      <ion-avatar item-start>
+        <img [src]=" '../../assets/imgs/' + informationsActuelles?.idstatut + '.png'">
+      </ion-avatar>
+      <h2>Statut: {{toLibelle("idstatut",informationsActuelles?.idstatut)}}</h2>
+      <p>{{ toDate(informationsActuelles?.date_add,"") }}</p>
+    </ion-item>
 
-  <ion-item>
-    <ion-label style="color: #000;" >
-      Description : {{informationsActuelles?.description}}
-    </ion-label>
-  </ion-item>
+    <img style="max-height: 400px" [src]="informationsActuelles?.phototraitement">
 
-  <ion-item>
-    <ion-label style="color: #000;" >
-      Statut : {{toLibelle("idstatut",informationsActuelles?.idstatut)}}
-    </ion-label>
-  </ion-item>
+    <ion-card-content>
+      <p> Description: {{informationsActuelles?.description}}</p>
+    </ion-card-content>
+
+    <ion-row>
+
+      <ion-col>
+        <button ion-button icon-start clear small>
+          <ion-icon name="text"></ion-icon>
+          <div>Détails</div>
+        </button>
+      </ion-col>
+
+    </ion-row>
+
+  </ion-card>
 
   <ion-item padding="0">
     <h1 >Actions:</h1>
@@ -54,13 +59,39 @@
 
 
   <ion-list>
-    <button ion-item *ngFor="let item of fichierJsonGetRowsFiltre"   (click)="itemTapped($event, item)">
-      Statut: {{toLibelle("idstatut",item?.idstatut)}}
-      <p>Observations: {{item?.observation}}</p>
-      <p>Date : {{ toDate(item?.date_add,"") }}</p>
-      <ion-icon style="zoom:0.85;" name="list-box" (click)="detailItemTapped($event, item)" item-end></ion-icon>
 
-    </button>
+
+    <ion-card ion-item *ngFor="let item of fichierJsonGetRowsFiltre">
+
+      <ion-item>
+        <ion-avatar item-start>
+          <img [src]=" '../../assets/imgs/' + item?.idstatut + '.png'">
+        </ion-avatar>
+        <h2>Statut: {{toLibelle("idstatut",item?.idstatut)}}</h2>
+        <p>{{ toDate(item?.date_add,"") }}</p>
+      </ion-item>
+
+      <img style="max-height: 400px" [src]="item?.phototraitement">
+
+      <ion-card-content>
+        <p> Observations: {{item?.observation}}</p>
+      </ion-card-content>
+
+      <ion-row>
+
+        <ion-col>
+          <button ion-button icon-start clear small>
+            <ion-icon name="text"></ion-icon>
+            <div>Détails</div>
+          </button>
+        </ion-col>
+
+      </ion-row>
+
+    </ion-card>
+
+
+
   </ion-list>
 
   <!--button *ngIf="derniereAction() && derniereAction().idstatut == 2" type="submit" color="secondary" ion-button  block (click)="rejeterIncident()">

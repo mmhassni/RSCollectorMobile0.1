@@ -29,6 +29,11 @@ export class AuthentificationPage {
   public login='';
   public mdp='';
 
+  public nom = "";
+  public prenom = "";
+  public role = "";
+
+
 
   constructor(public platform: Platform,
               public navCtrl: NavController,
@@ -50,6 +55,9 @@ export class AuthentificationPage {
         console.log(objectImported);
         if(objectImported && objectImported.success) {
 
+          this.nom = this.parametresAuthentificationActuelles.data.nom;
+          this.prenom = this.parametresAuthentificationActuelles.data.prenom;
+
           this.stockageProvider.setValue("identifiants",
             {"login":this.login,
               "mdp":this.mdp});
@@ -68,7 +76,10 @@ export class AuthentificationPage {
           formData.append('page', "1");
           formData.append('start', "0");
           formData.append('limit', "-1");
-          formData.append('filter ', '{"simple_filter":"{\\"loginutilisateur\\":\\"' + this.parametresAuthentificationActuelles.data.login + '\\"}"}');
+          if(this.parametresAuthentificationActuelles && this.parametresAuthentificationActuelles.data["role"] != "0"){
+            formData.append('filter ', '{"simple_filter":"{\\"loginutilisateur\\":\\"' + this.parametresAuthentificationActuelles.data.login + '\\"}"}');
+
+          }
 
 
 
@@ -80,7 +91,10 @@ export class AuthentificationPage {
             .subscribe( data => {
 
               console.log(data);
+
               this.parametresAuthentificationActuelles["affectationsecteur"] = data;
+              this.parametresAuthentificationActuelles["eteindrenotification"] = true;
+
               this.authentificationProvider.update(this.parametresAuthentificationActuelles);
               this.navCtrl.push(TabsPage);
 

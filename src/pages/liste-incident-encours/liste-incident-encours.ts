@@ -1,15 +1,14 @@
-import {Component} from '@angular/core';
-import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
+import { Component } from '@angular/core';
+import {ActionSheetController, Events, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Subscription} from "rxjs";
+import {ListeActionPage} from "../liste-action/liste-action";
 import {AuthentificationProvider} from "../../providers/authentification/authentification";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AboutPage} from "../about/about";
-import {ListeActionPage} from "../liste-action/liste-action";
-import { ActionSheetController } from 'ionic-angular';
 import {GenericFilterPage} from "../generic-filter/generic-filter";
 
 /**
- * Generated class for the ListeIncidentPage page.
+ * Generated class for the ListeIncidentEncoursPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -17,10 +16,11 @@ import {GenericFilterPage} from "../generic-filter/generic-filter";
 
 @IonicPage()
 @Component({
-  selector: 'page-liste-incident',
-  templateUrl: 'liste-incident.html',
+  selector: 'page-liste-incident-encours',
+  templateUrl: 'liste-incident-encours.html',
 })
-export class ListeIncidentPage {
+export class ListeIncidentEncoursPage {
+
 
   tags = [];
 
@@ -219,7 +219,7 @@ export class ListeIncidentPage {
 
 
 
-          //recuperation des actions
+        //recuperation des actions
         this.listeAction = [];
 
         let champAEvaluer = [];
@@ -289,9 +289,9 @@ export class ListeIncidentPage {
 
 
 
-      }
+        }
 
-      console.log(this.listeAction);
+        console.log(this.listeAction);
 
 
 
@@ -391,6 +391,7 @@ export class ListeIncidentPage {
         buttons.push({
           text: this.listeAction[i].libelle,
           role: 'destructive',
+          icon: 'trash',
           mode:"ios",
           translucent:true,
           handler: () => {

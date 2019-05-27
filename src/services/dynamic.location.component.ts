@@ -76,7 +76,7 @@ export class DynamicLocationComponent  implements OnInit {
 
   recupererGraphic() {
 
-    this.navCtrl.push(MapLocationPage,{x: this.x, y: this.y});
+    this.navCtrl.push(MapLocationPage,{x: this.x, y: this.y,action: "getLocation"});
   }
 
 

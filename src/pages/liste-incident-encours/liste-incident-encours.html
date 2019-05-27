@@ -43,7 +43,7 @@
   <ion-list>
 
     <div *ngFor="let item of fichierJsonGetRowsFiltre">
-      <button *ngIf="conformeAuFiltre(item)"  mode="md" ion-item    (click)="itemTapped($event, item)">
+      <button *ngIf="( (item?.idstatut == 1 || item?.idstatut == 2 || item?.idstatut == 3) && role == 0) || ( (item?.idstatut == 1 || item?.idstatut == 3) && role == 2) || ( (item?.idstatut == 2) && role == 1)"  mode="md" ion-item    (click)="itemTapped($event, item)">
 
         <p>Type Panne : {{toLibelle("idtypepanne",item?.idtypepanne)}} ({{toLibelle("idvoletpanne",item?.idvoletpanne)}})</p>
         <p>Date : {{ toDate(item?.date_add,"") }}</p>

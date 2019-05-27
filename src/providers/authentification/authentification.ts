@@ -75,6 +75,7 @@ export class AuthentificationProvider {
 
 
           (data as any).data = JSON.parse((data as any).data);
+          //(data as any).data.filter = JSON.parse( (data as any).data.filter );
 
 
           this.parametresAuthentification = data;

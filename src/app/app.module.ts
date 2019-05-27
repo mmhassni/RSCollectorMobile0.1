@@ -39,6 +39,7 @@ import {CodePush} from "@ionic-native/code-push/ngx";
 import { Device } from '@ionic-native/device';
 
 import {IonTagsInputModule} from "ionic-tags-input";
+import {ListeIncidentEncoursPage} from "../pages/liste-incident-encours/liste-incident-encours";
 
 
 
@@ -59,6 +60,7 @@ import {IonTagsInputModule} from "ionic-tags-input";
     AuthentificationPage,
     ListeIncidentPage,
     ListeActionPage,
+    ListeIncidentEncoursPage,
     GenericFilterPage
 
   ],
@@ -86,6 +88,7 @@ import {IonTagsInputModule} from "ionic-tags-input";
     AuthentificationPage,
     ListeIncidentPage,
     ListeActionPage,
+    ListeIncidentEncoursPage,
     GenericFilterPage
 
   ],

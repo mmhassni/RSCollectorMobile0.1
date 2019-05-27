@@ -9,10 +9,12 @@
   <ion-content>
     <ion-item>
       <ion-avatar item-start>
-        <img src="https://scontent-fco1-1.xx.fbcdn.net/v/t1.0-9/42558954_1134945709992667_4122240762375045120_n.jpg?_nc_cat=105&_nc_eui2=AeGe4pZnGko4zgEi0_mmHkrhDxZqafKIOaVJI8yroDriqDo-2U0fczgWfG2RvL1GWzRESICTA4QNayqk4wv4MmnAmcCDgq-vLf6B1zfXq6Cyyw&_nc_ht=scontent-fco1-1.xx&oh=62109472058555b2156e3650ed368f6a&oe=5D1EDE39">
+        <img src="../assets/imgs/profile-photo.jpg">
       </ion-avatar>
-      <h2>Mhassni Mohamed</h2>
-      <p>Administrateur</p>
+      <h2 *ngIf="parametresAuthentificationActuelles">{{parametresAuthentificationActuelles.data.nom}} {{parametresAuthentificationActuelles.data.prenom}}</h2>
+      <p *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.data.role == '0'">Administrateur</p>
+      <p *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.data.role == '1'">Technicien Préstataire</p>
+      <p *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.data.role == '2'">Technicien Opérateur</p>
       <ion-icon (click)="deconnexion()" name="power" item-end></ion-icon>
     </ion-item>
     <ion-list>
