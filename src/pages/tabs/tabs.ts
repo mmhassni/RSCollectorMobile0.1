@@ -10,8 +10,8 @@ import {ListeIncidentEncoursPage} from "../liste-incident-encours/liste-incident
 })
 export class TabsPage {
 
-  tab1Root = ListeIncidentPage;
-  tab2Root = ListeIncidentEncoursPage;
+  tab1Root = ListeIncidentEncoursPage;
+  tab2Root = ListeIncidentPage;
   tab3Root = ContactPage;
   tab4Root = MapLocationPage;
 
