@@ -1,0 +1,36 @@
+
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Choix Application</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Consulter :</h1>
+
+  </ion-item>
+
+
+  <ion-list>
+
+    <button ion-item (click)="choisirApplication('pageIncident')">
+      <ion-icon name="color-fill" item-start></ion-icon>
+      Gestion des incidents
+    </button>
+
+
+    <button ion-item (click)="choisirApplication('enquetePoi')">
+      <ion-icon name="body" item-start></ion-icon>
+      Enquetes POI
+    </button>
+
+  </ion-list>
+
+</ion-content>

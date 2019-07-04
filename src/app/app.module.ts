@@ -40,6 +40,9 @@ import { Device } from '@ionic-native/device';
 
 import {IonTagsInputModule} from "ionic-tags-input";
 import {ListeIncidentEncoursPage} from "../pages/liste-incident-encours/liste-incident-encours";
+import {ListeEnquetePoiPage} from "../pages/liste-enquete-poi/liste-enquete-poi";
+import {ChoixApplicationPage} from "../pages/choix-application/choix-application";
+import {StatistiqueIncidentPage} from "../pages/statistique-incident/statistique-incident";
 
 
 
@@ -61,7 +64,10 @@ import {ListeIncidentEncoursPage} from "../pages/liste-incident-encours/liste-in
     ListeIncidentPage,
     ListeActionPage,
     ListeIncidentEncoursPage,
-    GenericFilterPage
+    GenericFilterPage,
+    ListeEnquetePoiPage,
+    ChoixApplicationPage,
+    StatistiqueIncidentPage
 
   ],
   imports: [
@@ -89,7 +95,10 @@ import {ListeIncidentEncoursPage} from "../pages/liste-incident-encours/liste-in
     ListeIncidentPage,
     ListeActionPage,
     ListeIncidentEncoursPage,
-    GenericFilterPage
+    GenericFilterPage,
+    ListeEnquetePoiPage,
+    ChoixApplicationPage,
+    StatistiqueIncidentPage
 
   ],
   providers: [

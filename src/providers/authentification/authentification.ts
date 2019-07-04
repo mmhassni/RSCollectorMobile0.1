@@ -21,6 +21,7 @@ export class AuthentificationProvider {
 
   public login = "";
   public mdp = "";
+  public lastApplication: any;
 
   constructor(private device: Device,public httpClient: HttpClient, public toastCtrl : ToastController) {
     console.log('Hello AuthentificationProvider Provider');
@@ -35,6 +36,14 @@ export class AuthentificationProvider {
   emit() {
     this.parametresAuthentification$.next(this.parametresAuthentification);
     console.log(this.parametresAuthentification);
+  }
+
+  changerApplication(nouvelleApplication){
+
+    this.parametresAuthentification["lastApplication"] = nouvelleApplication;
+    this.lastApplication = nouvelleApplication;
+    this.emit();
+
   }
 
   update(parametresAuthentification : any){
@@ -82,6 +91,7 @@ export class AuthentificationProvider {
 
           (this.parametresAuthentification as any).data["role"] = JSON.parse((data as any).data.filter).idrole;
           (this.parametresAuthentification as any).data["profile"] = "technicienPrestataire";
+          (this.parametresAuthentification as any).data["lastApplication"] = this.lastApplication;
           try{
             (this.parametresAuthentification as any).data["ime"] = this.device.uuid;
             //alert(JSON.stringify(this.device));

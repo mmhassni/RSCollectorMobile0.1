@@ -5,6 +5,7 @@ import {AuthentificationProvider} from "../../providers/authentification/authent
 import {StockageProvider} from "../../providers/stockage/stockage";
 import {TabsPage} from "../tabs/tabs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {ChoixApplicationPage} from "../choix-application/choix-application";
 
 
 
@@ -32,6 +33,7 @@ export class AuthentificationPage {
   public nom = "";
   public prenom = "";
   public role = "";
+  public lastApplication: number;
 
 
 
@@ -95,8 +97,40 @@ export class AuthentificationPage {
               this.parametresAuthentificationActuelles["affectationsecteur"] = data;
               this.parametresAuthentificationActuelles["eteindrenotification"] = true;
 
-              this.authentificationProvider.update(this.parametresAuthentificationActuelles);
-              this.navCtrl.push(TabsPage);
+
+              this.stockageProvider.storage.get("lastApplication").then((val) => {
+
+                if(val){
+
+                  this.lastApplication = val.value;
+                  this.parametresAuthentificationActuelles['lastApplication'] = val.value;
+
+                  this.authentificationProvider.update(this.parametresAuthentificationActuelles);
+
+
+                  if(!this.parametresAuthentificationActuelles['lastApplication']){
+                    this.navCtrl.setRoot(ChoixApplicationPage);
+
+                  }else{
+                    this.navCtrl.setRoot(TabsPage);
+
+                  }
+
+                }else{
+                  this.navCtrl.setRoot(ChoixApplicationPage);
+
+                }
+
+
+
+
+              }).catch((error) => {
+                this.navCtrl.setRoot(ChoixApplicationPage);
+
+                console.log('get error for ' + "identifiant" + '', error);
+              });
+
+
 
 
 
@@ -117,6 +151,7 @@ export class AuthentificationPage {
 
       this.login = val.login;
       this.mdp = val.mdp;
+      this.lastApplication = val.lastapplication;
       this.seConnecter();
 
     }).catch((error) => {

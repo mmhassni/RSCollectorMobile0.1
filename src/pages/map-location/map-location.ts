@@ -105,11 +105,14 @@ export class MapLocationPage {
     // Load the ArcGIS API for JavaScript modules
     const [
       //Legend, TextSymbol, Font,
-      Point, Color, geometryJsonUtils, Map, MapView,Locate, Graphic,SimpleFillSymbol,SimpleLineSymbol
+      //mathUtils,
+      webMercatorUtils, Point, Color, geometryJsonUtils, Map, MapView,Locate, Graphic,SimpleFillSymbol,SimpleLineSymbol
     ]:any = await loadModules([
       //"esri/widgets/Legend",
       //"esri/symbols/TextSymbol",
       //"esri/symbols/Font",
+      //"esri/geometry/mathUtils",
+      "esri/geometry/support/webMercatorUtils",
       "esri/geometry/Point",
       'esri/Color',
       'esri/geometry/support/jsonUtils',
@@ -197,12 +200,18 @@ export class MapLocationPage {
     formData.append('limit', "-1");
 
     let filter = '{"advanced_filter":"{\\"query\\":\\"';
+    filter = filter + "f[" + "objectid" + "] in ( ";
     for(let i = 0 ; i < this.parametresAuthentificationActuelles["affectationsecteur"].items.length ; i++){
 
-      filter = filter + "f[" + "objectid" + "] = " + this.parametresAuthentificationActuelles["affectationsecteur"].items[i].idsecteur + " or ";
+      filter = filter  + "" + this.parametresAuthentificationActuelles["affectationsecteur"].items[i].idsecteur + "," ;
 
     }
-    filter = filter.substring(0,filter.length -3);
+
+    filter = filter.substring(0,filter.length -1);
+    filter = filter + ")";
+
+
+    //filter = filter.substring(0,filter.length -3);
     filter = filter + '\\"}"}';
     formData.append('filter', filter);
 
@@ -312,7 +321,8 @@ export class MapLocationPage {
 
 
 
-      let symbolPointCentroides = {
+      let symbolPointCentroides;
+      symbolPointCentroides = {
         type: 'simple-marker', // autocasts as new SimpleMarkerSymbol()
         size: 12,
         color: [255, 255, 0],
@@ -323,6 +333,72 @@ export class MapLocationPage {
       };
 
       for(let i = 0; i< coucheActuel.length;i++){
+
+        if(coucheActuel[i]["idstatut"] == 1){
+
+          symbolPointCentroides = {
+            type: 'simple-marker', // autocasts as new SimpleMarkerSymbol()
+            size: 12,
+            color: [99, 190, 196],
+            outline: { // autocasts as new SimpleLineSymbol()
+              color: [255, 255, 255],
+              width: 0
+            }
+          };
+
+          symbolPointCentroides = {
+            type: 'picture-marker',  // autocasts as new PictureMarkerSymbol()
+            url: 'http://172.20.10.2:8100/assets/imgs/1.png',
+            width: '18px',
+            height: '18px'
+
+          };
+
+        }
+        if(coucheActuel[i]["idstatut"] == 2){
+
+          symbolPointCentroides = {
+            type: 'picture-marker',  // autocasts as new PictureMarkerSymbol()
+            url: 'http://172.20.10.2:8100/assets/imgs/2.png',
+            width: '18px',
+            height: '18px'
+
+          };
+
+        }
+        if(coucheActuel[i]["idstatut"] == 3){
+
+          symbolPointCentroides = {
+            type: 'picture-marker',  // autocasts as new PictureMarkerSymbol()
+            url: 'http://localhost:8100/assets/imgs/3.png',
+            width: '18px',
+            height: '18px'
+
+          };
+
+        }
+        if(coucheActuel[i]["idstatut"] == 4){
+
+          symbolPointCentroides = {
+            type: 'picture-marker',  // autocasts as new PictureMarkerSymbol()
+            url: 'http://172.20.10.2:8100/assets/imgs/4.png',
+            width: '18px',
+            height: '18px'
+
+          };
+
+        }
+        if(coucheActuel[i]["idstatut"] == 5){
+
+          symbolPointCentroides = {
+            type: 'picture-marker',  // autocasts as new PictureMarkerSymbol()
+            url: 'http://172.20.10.2:8100/assets/imgs/5.png',
+            width: '18px',
+            height: '18px'
+
+          };
+
+        }
 
 
 
@@ -381,6 +457,18 @@ export class MapLocationPage {
 
 
 
+    let z = document.createElement('ion-icon'); // is a node
+    console.log(z);
+    console.log(document);
+    z.setAttribute("name", "refresh")
+    //z.innerHTML = 'test satu dua tiga';
+
+    mapView.ui.add([
+        {
+        component: z,
+        position: "bottom-left"
+      }
+    ]);
 
 
 
@@ -397,6 +485,68 @@ export class MapLocationPage {
       MapLocationPage.graphicActuel = graphicActuel;
       mapView.graphics.add(graphicActuel);
       console.log("X: " + evt.mapPoint.longitude.toString() + ", <br>Y: " + evt.mapPoint.latitude.toString());
+
+
+      console.log(mapView.graphics);
+
+      let pointRef = new Point(evt.mapPoint.longitude, evt.mapPoint.latitude);
+      let pointRefWeb = webMercatorUtils.geographicToWebMercator(pointRef);
+
+      let distMin ;
+      let pointMin ;
+      let pointActuelTempWeb;
+      for(let i=0; i<mapView.graphics.items.length ; i++ ){
+
+        if(mapView.graphics.items[i].geometry.__proto__.declaredClass == "esri.geometry.Point"){
+
+          let pointActuelTemp = new Point(mapView.graphics.items[i].geometry.x, mapView.graphics.items[i].geometry.y);
+          pointActuelTempWeb = webMercatorUtils.geographicToWebMercator(pointActuelTemp);
+
+          if(distMin){
+
+            if(((pointActuelTempWeb.x-pointRefWeb.x)**2 + (pointActuelTempWeb.y-pointRefWeb.y)**2 ) ** 0.5  < distMin){
+
+              distMin = ((pointActuelTempWeb.x-pointRefWeb.x)**2 + (pointActuelTempWeb.y-pointRefWeb.y)**2 ) ** 0.5;
+              pointMin = pointActuelTemp;
+
+            }
+
+
+          }else{
+            distMin = ((pointActuelTempWeb.x-pointRefWeb.x)**2 + (pointActuelTempWeb.y-pointRefWeb.y)**2 ) ** 0.5;
+            pointMin = pointActuelTemp;
+
+          }
+
+
+        }
+
+
+
+      }
+
+      console.log("distance min" , distMin);
+      console.log("echel" , mapView.scale);
+
+      if(distMin && mapView.scale/distMin >= 400){
+
+        graphicActuel.geometry = {
+          type: 'point', // autocasts as new Point()
+          longitude: pointMin.x,
+          latitude: pointMin.y
+        };
+
+        mapView.graphics.add(graphicActuel);
+
+
+      }else{
+
+
+        mapView.graphics.add(graphicActuel);
+
+
+
+      }
 
     });
 

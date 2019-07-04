@@ -6,10 +6,9 @@ import {AuthentificationProvider} from "../../providers/authentification/authent
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AboutPage} from "../about/about";
 import {GenericFilterPage} from "../generic-filter/generic-filter";
-import {StatistiqueIncidentPage} from "../statistique-incident/statistique-incident";
 
 /**
- * Generated class for the ListeIncidentEncoursPage page.
+ * Generated class for the StatistiqueIncidentPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -17,11 +16,10 @@ import {StatistiqueIncidentPage} from "../statistique-incident/statistique-incid
 
 @IonicPage()
 @Component({
-  selector: 'page-liste-incident-encours',
-  templateUrl: 'liste-incident-encours.html',
+  selector: 'page-statistique-incident',
+  templateUrl: 'statistique-incident.html',
 })
-export class ListeIncidentEncoursPage {
-
+export class StatistiqueIncidentPage {
 
   tags = [];
 
@@ -35,7 +33,7 @@ export class ListeIncidentEncoursPage {
   public objetActuel = {};
 
 
-  public nomTable = "declaration";
+  public nomTable = "statstatut";
   public nomTableRef = "action";
   public pageTableRef = ListeActionPage;
   public page = "1";
@@ -75,17 +73,8 @@ export class ListeIncidentEncoursPage {
         this.parametresAuthentificationActuelles = objectImported;
         if(this.parametresAuthentificationActuelles && this.parametresAuthentificationActuelles.success && this.parametresAuthentificationActuelles["affectationsecteur"]){
 
-          let filter = '{"advanced_filter":"{\\"query\\":\\"';
-          for(let i = 0 ; i < this.parametresAuthentificationActuelles["affectationsecteur"].items.length ; i++){
 
-            filter = filter + "f[" + "idsecteur" + "] = " + this.parametresAuthentificationActuelles["affectationsecteur"].items[i].idsecteur + " or ";
 
-          }
-
-          filter = filter.substring(0,filter.length -3);
-          filter = filter + '\\"}"}';
-
-          this.filter = filter;
 
           this.role = JSON.parse(this.parametresAuthentificationActuelles.data.filter).idrole;
           this.refresh();
@@ -299,7 +288,6 @@ export class ListeIncidentEncoursPage {
 
 
 
-
       });
 
   }
@@ -394,7 +382,6 @@ export class ListeIncidentEncoursPage {
         buttons.push({
           text: this.listeAction[i].libelle,
           role: 'destructive',
-          icon: 'trash',
           mode:"ios",
           translucent:true,
           handler: () => {
@@ -606,27 +593,5 @@ export class ListeIncidentEncoursPage {
   }
 
 
-  detailActionMenu() {
 
-    // @ts-ignore
-    const actionSheet = this.actionSheetCtrl.create({
-      title: 'Actions',
-      buttons: [
-        {
-          text: "Statistiques",
-          role: 'destructive',
-          //icon: 'md-sync',
-          handler: () => {
-
-            this.navCtrl.push(StatistiqueIncidentPage,{});
-
-          }
-        }
-
-
-      ]
-    });
-    actionSheet.present();
-
-  }
 }

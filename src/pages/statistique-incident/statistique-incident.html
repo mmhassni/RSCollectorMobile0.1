@@ -1,0 +1,53 @@
+
+
+<!--
+  Generated template for the ListeFournisseurPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Statistiques Incidents</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+
+<ion-content padding>
+
+
+
+
+
+  <ion-item padding="0">
+    <h1>Statistiques:</h1>
+  </ion-item>
+
+
+  <ion-list>
+
+    <div *ngFor="let item of fichierJsonGetRowsFiltre">
+      <button   mode="md" ion-item    (click)="itemTapped($event, item)">
+        Statut : {{item?.statut}}
+        <p>Nombre : {{item?.valeur}} incidents </p>
+      </button>
+
+
+    </div>
+
+
+  </ion-list>
+
+
+
+  <br> <br>
+
+
+
+
+
+</ion-content>

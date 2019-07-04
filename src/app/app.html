@@ -19,9 +19,14 @@
     </ion-item>
     <ion-list>
 
-      <button menuClose ion-item *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.success" (click)="openPage(pageIncident)">
+      <button menuClose ion-item *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.success" (click)="openPage('pageIncident')">
         Suivi Incident
       </button>
+
+      <button menuClose ion-item *ngIf="parametresAuthentificationActuelles && parametresAuthentificationActuelles.success" (click)="openPage('enquetePoi')">
+        Enquete POI
+      </button>
+
       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
         {{p.title}}
       </button>

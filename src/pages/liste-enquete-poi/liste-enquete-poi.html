@@ -11,39 +11,24 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Liste Incident</ion-title>
-
-    <ion-buttons end>
-      <div (click)="detailActionMenu()">
-        <ion-icon  style="zoom:1.6;
-                          /*background-color: #32db64;*/
-                          padding-right: 10px;
-                          padding-left: 30px;
-                          padding-top: 0px;
-                          padding-bottom: 0px;"
-                   name="md-cube"
-                   >
-        </ion-icon>
-      </div>
-    </ion-buttons>
-
-
+    <ion-title>Enquetes POI</ion-title>
   </ion-navbar>
 </ion-header>
+
+
 
 
 
 <ion-content padding-left padding-top>
 
 
-
-
   <ion-item style="padding-right: 5px" >
 
-    <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-    <ion-icon  style="zoom:0.9;" name="ios-funnel" (click)="filterTapped($event, item)" item-end></ion-icon>
+    <ion-searchbar  (ionInput)="getItems($event)"></ion-searchbar>
+    <ion-icon  style="zoom:0.9;margin-right: 0px" name="ios-funnel" (click)="filterTapped($event, item)" item-end></ion-icon>
 
   </ion-item>
+
 
   <ion-item *ngIf="tags.length">
 
@@ -59,13 +44,12 @@
   <ion-list>
 
     <div *ngFor="let item of fichierJsonGetRowsFiltre">
-      <button *ngIf="conformeAuFiltre(item) &&  (( (item?.idstatut == 1 || item?.idstatut == 2 || item?.idstatut == 3 || item?.idstatut == 5) && role == 0) || ( (item?.idstatut == 1 || item?.idstatut == 3 || item?.idstatut == 5) && role == 2) || ( (item?.idstatut == 2) && role == 1))"  mode="md" ion-item    (click)="itemTapped($event, item)">
+      <button *ngIf="conformeAuFiltre(item)"  mode="md" ion-item    (click)="itemTapped($event, item)">
 
-        <p>Type Panne : {{toLibelle("idtypepanne",item?.idtypepanne)}} ({{toLibelle("idvoletpanne",item?.idvoletpanne)}})</p>
+        <p>Type Enquete : {{toLibelle("idtypepoi",item?.idtypepoi)}}</p>
+        <p>No Patante : {{ item?.nopatente }}</p>
         <p>Date : {{ toDate(item?.date_add,"") }}</p>
-        <p>Description : {{item?.description}}</p>
-        <p>Statut : {{toLibelle("idstatut",item?.idstatut)}}</p>
-        <p>Secteur : {{toLibelle("idcommune",item?.idsecteur)}}</p>
+
         <ion-icon  style="zoom:1; /*background-color: #32db64;*/padding-right: 10px;padding-left: 30px;padding-top: 10px;padding-bottom: 10px;" name="md-more" (click)="detailItemTapped($event, item)" item-end></ion-icon>
 
       </button>

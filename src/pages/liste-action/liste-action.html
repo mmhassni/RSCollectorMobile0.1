@@ -31,9 +31,8 @@
         <img [src]=" '../../assets/imgs/1.png'">
       </ion-avatar>
       <h2>Statut: {{toLibelle("idstatut",1)}}</h2>
-      <p>{{ toDate(informationsActuelles?.date_add,"") }}</p>
-      <p>Panne: panne de la declaration</p>
-      <p>NJT: nombre jour traitement</p>
+      <p>Date : {{ toDate(informationsActuelles?.date_add,"") }} ({{ (informationsActuelles?.datemodif - informationsActuelles?.date_add)/(3600*24*1000) }} Jours)  </p>
+      <p>Panne: {{informationsActuelles?.libelleidtypepanne}} ({{informationsActuelles?.libelleidvoletpanne}})</p>
 
     </ion-item>
 

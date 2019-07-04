@@ -7,6 +7,7 @@ import {AboutPage} from "../about/about";
 import {ListeActionPage} from "../liste-action/liste-action";
 import { ActionSheetController } from 'ionic-angular';
 import {GenericFilterPage} from "../generic-filter/generic-filter";
+import {StatistiqueIncidentPage} from "../statistique-incident/statistique-incident";
 
 /**
  * Generated class for the ListeIncidentPage page.
@@ -219,14 +220,14 @@ export class ListeIncidentPage {
 
 
 
-          //recuperation des actions
+        //recuperation des actions
         this.listeAction = [];
 
         let champAEvaluer = [];
         let valeurDeComparaison = [];
         for(let i = 0 ; i < (dataFields as any).items.length; i++){
 
-          if( (dataFields as any).items[i]["id"].length >= 4 &&  (dataFields as any).items[i]["id"].substring(0,4) == "ref_" ){
+          if( (dataFields as any).items[i]["id"].length >= 4 &&  (dataFields as any).items[i]["type"] == "mobileitem" ){
             console.log((dataFields as any).items[i].tag);
 
 
@@ -260,7 +261,7 @@ export class ListeIncidentPage {
           let listeCriteres = [];
           let critereTemp = {};
 
-          if(champAEvaluer.length){
+          if((dataFields as any).items[i]["type"] == "mobileitem" && champAEvaluer.length){
 
             for(let j = 0 ; j < champAEvaluer.length; j++){
               critereTemp = {};
@@ -276,12 +277,14 @@ export class ListeIncidentPage {
 
 
             try {
-              console.log({"themeAction" : JSON.parse(JSON.parse((dataFields as any).items[i].nom).table).id  , "criteres" : listeCriteres });
-              this.listeAction.push({"libelle" : (dataFields as any).items[i].libelle,"themeAction" : JSON.parse(JSON.parse((dataFields as any).items[i].nom).table).id , "criteres" : listeCriteres });
+              console.log((dataFields as any).items[i].nom.split(":")[0].substring(1));
+              //console.log({"themeAction" : JSON.parse(JSON.parse((dataFields as any).items[i].nom).table).id  , "criteres" : listeCriteres });
+              this.listeAction.push({"libelle" : (dataFields as any).items[i].libelle,"themeAction" : (dataFields as any).items[i].nom.split(":")[0].substring(1), "criteres" : listeCriteres });
 
             }
             catch(error) {
 
+              console.log(error);
             }
 
 
@@ -289,10 +292,9 @@ export class ListeIncidentPage {
 
 
 
-      }
+        }
 
-      console.log(this.listeAction);
-
+        console.log(this.listeAction);
 
 
 
@@ -455,7 +457,10 @@ export class ListeIncidentPage {
       };
 
       let parametres = {
-        informationsActuelles: item,
+        informationsActuelles: Object.assign({
+          libelleidtypepanne : this.toLibelle("idtypepanne",(item as any).idtypepanne) ,
+          libelleidvoletpanne : this.toLibelle("idvoletpanne",(item as any).idvoletpanne)}  ,
+          item   ) ,
         action: "modifier"
       };
 
@@ -509,7 +514,10 @@ export class ListeIncidentPage {
 
       if(listeChampFiltre.indexOf(this.fichierJsonGetFields.items[i]["id"]) >= 0 ){
 
-        getFieldsPageFiltre["items"].push(this.fichierJsonGetFields.items[i]);
+        let itemTemp = this.fichierJsonGetFields.items[i];
+        itemTemp["visible"] = true;
+        itemTemp["readonly"] = false;
+        getFieldsPageFiltre["items"].push(itemTemp);
 
       }
 
@@ -593,6 +601,30 @@ export class ListeIncidentPage {
     }
     */
     return isConformeAuFiltre;
+  }
+
+  detailActionMenu() {
+
+    // @ts-ignore
+    const actionSheet = this.actionSheetCtrl.create({
+      title: 'Actions',
+      buttons: [
+        {
+          text: "Statistiques",
+          role: 'destructive',
+          //icon: 'md-sync',
+          handler: () => {
+
+            this.navCtrl.push(StatistiqueIncidentPage,{});
+
+          }
+        }
+
+
+      ]
+    });
+    actionSheet.present();
+
   }
 
 

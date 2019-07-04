@@ -10,6 +10,7 @@ import {AuthentificationProvider} from "../providers/authentification/authentifi
 import {StockageProvider} from "../providers/stockage/stockage";
 import {TabsPage} from "../pages/tabs/tabs";
 import {Pro} from "@ionic/pro";
+import {ChoixApplicationPage} from "../pages/choix-application/choix-application";
 
 @Component({
   templateUrl: 'app.html'
@@ -25,7 +26,8 @@ export class MyApp {
 
   public parametresAuthentificationSubscription : Subscription;
   public parametresAuthentificationActuelles = null;
-  public pageIncident = {component : TabsPage};
+  public pageIncident = {component : ChoixApplicationPage};
+  public enquetePoi = {component : ChoixApplicationPage};
 
   public progressBar = 0;
 
@@ -139,13 +141,24 @@ export class MyApp {
   openPage(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    this.nav.setRoot(page.component);
+    if(page == "enquetePoi"){
+      this.authentificationProvider.changerApplication(2);
+      this.stockageProvider.setValue("lastApplication",
+        {"value":2});
+    }
+    if(page == "pageIncident"){
+      this.authentificationProvider.changerApplication(1);
+      this.stockageProvider.setValue("lastApplication",
+        {"value":1});
+    }
+    this.nav.setRoot(TabsPage);
   }
 
   deconnexion(){
-    this.stockageProvider.setValue("identifiants",{"login":"","mdp":""});
+    this.stockageProvider.setValue("identifiants",{"login":"","mdp":"","lastApplication":""});
     this.authentificationProvider.update(null);
     this.nav.setRoot(AuthentificationPage);
+
 
 
   }
